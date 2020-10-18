@@ -34,8 +34,8 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
         const harDataStr = document.getText(textRange);
         try {
           const harData = generateMock(JSON.parse(harDataStr) as HAR);
-          await writeMockFile(JSON.stringify(harData, null, "\t"), properties, document, editor, textRange, "json");
-          vscode.window.showInformationMessage("mock generated Successfully");
+          const notificationText = "mock generated Successfully";
+          await writeMockFile(JSON.stringify(harData, null, "\t"), properties, document, editor, textRange, "json", notificationText);
         } catch (err) {
           vscode.window.showErrorMessage("Failed to generate mock. ", err);
         }
@@ -57,8 +57,16 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
         const jsonData = document.getText(textRange);
         try {
           const filteredObject = filterBySchema(JSON.parse(jsonData), properties.filterSchema);
-          await writeMockFile(JSON.stringify(filteredObject, null, "\t"), properties, document, editor, textRange, "json");
-          vscode.window.showInformationMessage("Filtered Successfully");
+          const notificationText = "Filtered Successfully";
+          await writeMockFile(
+            JSON.stringify(filteredObject, null, "\t"),
+            properties,
+            document,
+            editor,
+            textRange,
+            "json",
+            notificationText
+          );
         } catch (err) {
           vscode.window.showErrorMessage("Failed to filter.", err);
         }
@@ -83,8 +91,9 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
             const url = `http://localhost:${config.port}${routes}`;
             return res.concat(url + "\n###\n");
           }, "");
-          await writeMockFile(routesList, properties, document, editor, textRange, "http");
-          vscode.window.showInformationMessage("Routes List Generated Successfully");
+
+          const notificationText = "Routes List Generated Successfully";
+          await writeMockFile(routesList, properties, document, editor, textRange, "http", notificationText);
         } catch (err) {
           vscode.window.showErrorMessage("Failed to get Routes List.", err);
         }
@@ -177,7 +186,8 @@ const writeMockFile = async (
   document: vscode.TextDocument,
   editor: vscode.TextEditor,
   textRange: vscode.Range,
-  extension: string
+  extension: string,
+  notificationText: string
 ) => {
   if (properties.saveAsNewFile) {
     let folderPath = path.resolve(path.dirname(document.uri.fsPath)) || "/";
@@ -188,10 +198,12 @@ const writeMockFile = async (
         fs.mkdirSync(folderPath);
       }
       fs.writeFileSync(path.join(folderPath, fileName), data);
+      vscode.window.showInformationMessage(notificationText);
     }
   } else {
     editor.edit((editBuilder) => {
       editBuilder.replace(textRange, data);
+      vscode.window.showInformationMessage(notificationText);
     });
   }
 };

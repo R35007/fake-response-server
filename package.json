@@ -59,26 +59,6 @@
 				},
 				"fakeResponse.filterSchema": {
 					"type": "object",
-					"default": {
-						"log": {
-							"entries": {
-								"_resourceType": true,
-								"request": {
-									"method": true,
-									"url": true,
-									"queryString": true,
-									"payload": true
-								},
-								"response": {
-									"status": true,
-									"content": {
-										"mimeType": true,
-										"text": true
-									}
-								}
-							}
-						}
-					},
 					"description": "Provide schema to filter object properties"
 				},
 				"fakeResponse.mockPath": {
