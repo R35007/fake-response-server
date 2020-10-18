@@ -48,7 +48,7 @@ This command generates a local mock server from the given `fakeResponse.mockPath
 
 This command gets tje generated routes list after starting the server.
 
-![Get Generated Routes List](https://github.com/R35007/fake-response-server/blob/master/images/generate_mock_preview.gif?raw=true)
+![Get Generated Routes List](https://github.com/R35007/fake-response-server/blob/master/images/get_generated_routes_list_preview.gif?raw=true)
 
 ### `Restart Server`
 
