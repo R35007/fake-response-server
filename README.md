@@ -1,4 +1,4 @@
-# Fake Response Server[](#fake-response)
+# Fake Response Server[](#fake-response-server)
 
 This extension helps to generate mock from HAR file and generate a local mock server.
 This also helps to filter any JSON file using the filter schema.
