@@ -289,10 +289,11 @@ const filterBySchema = (_data: any = {}, _schema: any = {}): any => {
 const getExtensionProperties = (workspaceConfig: vscode.WorkspaceConfiguration): ExtensionProperties => {
   let injectors = [];
   try {
-    injectors =
-      workspaceConfig.injectorsPath && fs.existsSync(path.dirname(workspaceConfig.injectorsPath))
-        ? require(workspaceConfig.injectorsPath)
-        : [];
+    if (workspaceConfig.injectorsPath && fs.existsSync(path.dirname(workspaceConfig.injectorsPath))) {
+      const injectorPath = path.resolve(workspaceConfig.injectorsPath);
+      delete require.cache[injectorPath];
+      injectors = require(workspaceConfig.injectorsPath);
+    }
   } catch (_err) {}
 
   const extensionProperties: ExtensionProperties = {
