@@ -2,7 +2,7 @@
 	"name": "fake-response-server",
 	"displayName": "Fake Response Server",
 	"description": "Simple extension helps to generate local mock server",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"icon": "images/fr.png",
 	"publisher": "Thinker",
 	"author": {
