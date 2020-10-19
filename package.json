@@ -2,7 +2,7 @@
 	"name": "fake-response-server",
 	"displayName": "Fake Response Server",
 	"description": "Simple extension helps to generate local mock server",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"icon": "images/fr.png",
 	"publisher": "Thinker",
 	"author": {
@@ -42,7 +42,6 @@
 		"onCommand:fakeResponse.generateMock",
 		"onCommand:fakeResponse.filterBySchema",
 		"onCommand:fakeResponse.startServer",
-		"onCommand:fakeResponse.reStartServer",
 		"onCommand:fakeResponse.stopServer",
 		"onCommand:fakeResponse.getRoutesList"
 	],
@@ -56,6 +55,18 @@
 					"type": "boolean",
 					"default": false,
 					"description": "On Action save the data as a new file."
+				},
+				"fakeResponse.generateMock.resourceTypeFilters": {
+					"type": "array",
+					"markdownDescription": "Provide list of resourceTypes to generate a mock",
+					"default": [
+						"xhr"
+					],
+					"items": {
+						"type": "string"
+					},
+					"uniqueItems": true,
+					"scope": "window"
 				},
 				"fakeResponse.filterSchema": {
 					"type": "object",
@@ -156,10 +167,6 @@
 			{
 				"command": "fakeResponse.startServer",
 				"title": "FakeResponse : Start Server"
-			},
-			{
-				"command": "fakeResponse.reStartServer",
-				"title": "FakeResponse : Restart Server"
 			},
 			{
 				"command": "fakeResponse.stopServer",

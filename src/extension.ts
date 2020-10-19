@@ -1,5 +1,5 @@
 import { FakeResponse } from "fake-response";
-import { Config, HAR } from "fake-response/dist/model";
+import { HAR } from "fake-response/dist/model";
 import * as fs from "fs";
 import * as path from "path";
 import { URL } from "url";
@@ -17,7 +17,6 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
   const filterBySchemaID = "fakeResponse.filterBySchema";
   const startServerID = "fakeResponse.startServer";
   const stopServerID = "fakeResponse.stopServer";
-  const reStartServerID = "fakeResponse.reStartServer";
   const getRoutesListID = "fakeResponse.getRoutesList";
 
   // Generate Mock
@@ -33,7 +32,7 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
         const textRange = getTextRange(document);
         const harDataStr = document.getText(textRange);
         try {
-          const harData = generateMock(JSON.parse(harDataStr) as HAR);
+          const harData = generateMock(JSON.parse(harDataStr) as HAR, properties.generateMock.resourceTypeFilters);
           const notificationText = "mock generated Successfully";
           await writeMockFile(JSON.stringify(harData, null, "\t"), properties, document, editor, textRange, "json", notificationText);
         } catch (err) {
@@ -115,7 +114,7 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
             .then(() => {
               isServerStarted = true;
               vscode.window.showInformationMessage(
-                `Server Started Successfully... \n listening to port http://localhost:${properties.config.port}`
+                `Server Started Successfully... listening at http://localhost:${properties.config.port}`
               );
             })
             .catch((err) => {
@@ -125,18 +124,6 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
           vscode.window.showErrorMessage("Please Provide a mock path in settings");
         }
       } else {
-        vscode.window.showInformationMessage("Server already Started Successfully");
-      }
-    })
-  );
-
-  // Re Start Server
-  subscriptions.push(
-    vscode.commands.registerCommand(reStartServerID, () => {
-      const workspaceConfiguration: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("fakeResponse");
-      const properties = getExtensionProperties(workspaceConfiguration);
-
-      if (isServerStarted) {
         fakeResponse.stopServer().then(() => {
           isServerStarted = false;
           if (properties.mockPath.length) {
@@ -150,10 +137,10 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
               .catch((err) => {
                 vscode.window.showErrorMessage("Server Failed to Start", err);
               });
+          } else {
+            vscode.window.showErrorMessage("Please Provide a mock path in settings");
           }
         });
-      } else {
-        vscode.window.showErrorMessage("There is no Server to Restart");
       }
     })
   );
@@ -298,6 +285,7 @@ const getExtensionProperties = (workspaceConfig: vscode.WorkspaceConfiguration):
 
   const extensionProperties: ExtensionProperties = {
     saveAsNewFile: workspaceConfig.saveAsNewFile,
+    generateMock: workspaceConfig.generateMock,
     config: workspaceConfig.config,
     mockPath: workspaceConfig.mockPath,
     filterSchema: workspaceConfig.filterSchema,

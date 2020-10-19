@@ -1,9 +1,12 @@
-import { Config, Injectors } from "fake-response/dist/model";
+import { Valid_Config, Injectors } from "fake-response/dist/model";
 
 export type ExtensionProperties = {
   saveAsNewFile: boolean;
   filterSchema: object;
-  config: Config;
+  generateMock: {
+    resourceTypeFilters: string[];
+  };
+  config: Valid_Config;
   mockPath: string;
   injectors: Injectors[];
   globals: object;

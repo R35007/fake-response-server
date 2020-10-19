@@ -46,15 +46,10 @@ This command generates a local mock server from the given `fakeResponse.mockPath
 
 ### `Get Generated Routes List`
 
-This command gets tje generated routes list after starting the server.
+This command gets the generated routes list after starting the server.
+If any changes done to the mock please start again to refresh the server.
 
 ![Get Generated Routes List](https://github.com/R35007/fake-response-server/blob/master/images/get_generated_routes_list_preview.gif?raw=true)
-
-### `Restart Server`
-
-Using this command Restart the server if any changes done to the mock or settings.
-
-![Get Generated Routes List](https://github.com/R35007/fake-response-server/blob/master/images/restart_server_preview.gif?raw=true)
 
 ### `Stop Server`
 
@@ -84,7 +79,7 @@ set the mock path here. any JSON inside the folder or file will be generate as a
 
 Provide the .js file path that default exports the injectors module.
 
-- For Example: create a injector.js
+- For Example: create a injectors.js
 
 ```js
 
