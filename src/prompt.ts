@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as path from "path";
 
 export class Prompt {
   window;
@@ -12,12 +13,11 @@ export class Prompt {
       value: "",
       placeHolder: "File Name",
       validateInput: (text) => {
-        const fileName = text.split(".");
-        return fileName.length >= 2 && extensions.indexOf(fileName[1]) < 0 ? text : null;
+        return text.length && extensions.indexOf(path.extname(text) || extensions[0]) < 0 ? text : null;
       },
     });
 
-    return fileName && fileName.split(".").length === 1 ? fileName + `.${extensions[0]}` : fileName;
+    return fileName && !path.extname(fileName).length ? fileName + `${extensions[0]}` : fileName;
   };
 
   shouldSaveAsNewFile = () => {

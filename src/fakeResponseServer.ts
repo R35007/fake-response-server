@@ -25,7 +25,7 @@ export class FakeResponseServer extends Utils {
   }
 
   generateMockFromHAR = async () => {
-    const writables = await this.getWritables(["json"], generateMockID);
+    const writables = await this.getWritables([".json"], generateMockID);
     if (writables) {
       const { editorText, fileName, editor, document, textRange } = writables;
       try {
@@ -40,7 +40,7 @@ export class FakeResponseServer extends Utils {
   };
 
   filterBySchema = async () => {
-    const writables = await this.getWritables(["json"], filterBySchemaID);
+    const writables = await this.getWritables([".json"], filterBySchemaID);
     if (writables) {
       const { editorText, fileName, editor, document, textRange } = writables;
       try {
@@ -54,15 +54,28 @@ export class FakeResponseServer extends Utils {
   };
 
   getRoutesList = async () => {
-    const writables = await this.getWritables(["http"], getRoutesListID);
+    const writables = await this.getWritables([".http"], getRoutesListID);
     if (writables) {
       const { fileName, editor, document, textRange } = writables;
       try {
         const { availableRoutes, config } = this.fakeResponse.getData();
-        const routesList = availableRoutes.reduce((res, routes) => {
-          const url = `http://localhost:${config.port}${routes}`;
-          return res.concat(url + "\n###\n");
-        }, "");
+
+        const defaultRoutes = ["/routesList", "/db"];
+        const totalUniqueRoutes = [...new Set([...availableRoutes, ...defaultRoutes])]; // getting unique list
+
+        const initial = `
+Total Resources = ${totalUniqueRoutes.length} resources.
+@hostname = localhost
+@port = ${config.port}
+@baseurl = ${config.baseUrl || ""}
+
+###
+`;
+
+        const routesList = totalUniqueRoutes.reduce((res, route) => {
+          const url = `http://localhost:${config.port}${route}`;
+          return res + url + "\n###\n";
+        }, initial);
 
         this.writeFile(routesList, fileName, "Routes List Fetched Successfully", editor, document, textRange);
       } catch (err) {

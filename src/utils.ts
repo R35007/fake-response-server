@@ -141,11 +141,12 @@ export class Utils extends Prompt {
     textRange: vscode.Range
   ) => {
     if (fileName.length) {
-      let folderPath = path.resolve(path.dirname(document.fileName)) || "/";
+      const filePath = path.resolve(path.dirname(document.fileName), fileName);
+      const folderPath = path.dirname(filePath) || "/";
       if (!fs.existsSync(folderPath)) {
-        fs.mkdirSync(folderPath);
+        fs.mkdirSync(folderPath, { recursive: true });
       }
-      fs.writeFileSync(path.join(folderPath, fileName), data);
+      fs.writeFileSync(filePath, data);
       vscode.window.showInformationMessage(notificationText);
     } else {
       editor.edit((editBuilder) => {
