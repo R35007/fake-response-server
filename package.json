@@ -2,7 +2,7 @@
 	"name": "fake-response-server",
 	"displayName": "Fake Response Server",
 	"description": "Simple extension helps to generate local mock server",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"icon": "images/fr.png",
 	"publisher": "Thinker",
 	"author": {
@@ -39,126 +39,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:fakeResponse.generateMock",
-		"onCommand:fakeResponse.filterBySchema",
-		"onCommand:fakeResponse.startServer",
-		"onCommand:fakeResponse.stopServer",
-		"onCommand:fakeResponse.getRoutesList"
+		"*"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
-		"configuration": {
-			"type": "object",
-			"title": "Fake Response",
-			"properties": {
-				"fakeResponse.saveAsNewFile": {
-					"type": "boolean",
-					"default": false,
-					"description": "On Action save the data as a new file."
-				},
-				"fakeResponse.generateMock.resourceTypeFilters": {
-					"type": "array",
-					"markdownDescription": "Provide list of resourceTypes to generate a mock",
-					"default": [
-						"xhr"
-					],
-					"items": {
-						"type": "string"
-					},
-					"uniqueItems": true,
-					"scope": "window"
-				},
-				"fakeResponse.filterSchema": {
-					"type": "object",
-					"description": "Provide schema to filter object properties"
-				},
-				"fakeResponse.mockPath": {
-					"type": "string",
-					"description": "Mock Path to generate local mock server"
-				},
-				"fakeResponse.injectorsPath": {
-					"type": "string",
-					"description": "Provide the Injectors .js path. Note: the js file must have an default module export of the injectors list."
-				},
-				"fakeResponse.globals": {
-					"type": "object",
-					"description": "Provide any initial values before starting the server"
-				},
-				"fakeResponse.config.port": {
-					"type": "integer",
-					"default": 3000,
-					"description": "Port to generate local mock server"
-				},
-				"fakeResponse.config.rootPath": {
-					"type": "string",
-					"default": "./",
-					"description": "Provide the rootPath. The mock path will be relative to this path"
-				},
-				"fakeResponse.config.baseUrl": {
-					"type": "string",
-					"description": "Provide Base Mock URL"
-				},
-				"fakeResponse.config.env": {
-					"type": "string",
-					"description": "Provide Mock Environment"
-				},
-				"fakeResponse.config.groupings": {
-					"type": "object",
-					"description": "Provide URL mapping for Grouping Routes"
-				},
-				"fakeResponse.config.proxy": {
-					"type": "object",
-					"default": {
-						"exactMatch": {},
-						"patternMatch": {}
-					}
-				},
-				"fakeResponse.config.excludeRoutes.patternMatch": {
-					"type": "array",
-					"markdownDescription": "Provide list of routes to exclude form generate local server that matches this pattern",
-					"items": {
-						"type": "string"
-					},
-					"uniqueItems": true,
-					"scope": "window"
-				},
-				"fakeResponse.config.excludeRoutes.exactMatch": {
-					"type": "array",
-					"markdownDescription": "Provide list of routes to exclude form generate local server that matches this route",
-					"items": {
-						"type": "string"
-					},
-					"uniqueItems": true,
-					"scope": "window"
-				},
-				"fakeResponse.config.delay.time": {
-					"type": "integer",
-					"description": "Provide a common delay in milliseconds"
-				},
-				"fakeResponse.config.delay.excludeRoutes.patternMatch": {
-					"type": "array",
-					"markdownDescription": "Provide list of routes to exclude for delay that matches this pattern",
-					"items": {
-						"type": "string"
-					},
-					"uniqueItems": true,
-					"scope": "window"
-				},
-				"fakeResponse.config.delay.excludeRoutes.exactMatch": {
-					"type": "array",
-					"markdownDescription": "Provide list of routes to exclude for delay that matches this route",
-					"items": {
-						"type": "string"
-					},
-					"uniqueItems": true,
-					"scope": "window"
-				}
-			}
-		},
 		"commands": [
 			{
-				"command": "fakeResponse.generateMock",
-				"title": "FakeResponse : Generate Mock"
+				"command": "fakeResponse.generateMockFromHAR",
+				"title": "FakeResponse : Generate Mock from HAR"
 			},
 			{
 				"command": "fakeResponse.filterBySchema",
@@ -173,10 +61,165 @@
 				"title": "FakeResponse : Stop Server"
 			},
 			{
+				"command": "fakeResponse.switchEnvironment",
+				"title": "FakeResponse : Switch Environment"
+			},
+			{
 				"command": "fakeResponse.getRoutesList",
-				"title": "FakeResponse : Get Generated Routes List"
+				"title": "FakeResponse : Get Routes List"
 			}
-		]
+		],
+		"configuration": {
+			"title": "Fake Response Server",
+			"properties": {
+				"fake-response-server.config.port": {
+					"type": "number",
+					"default": 3000,
+					"description": "Set custom port to generate local mock server"
+				},
+				"fake-response-server.config.baseUrl": {
+					"type": "string",
+					"default": "",
+					"description": "Set custom base url. This url will be added as a prefix to every routes"
+				},
+				"fake-response-server.config.paths": {
+					"type": "object",
+					"default": {
+						"rootPath": "./",
+						"mockPath": "",
+						"envPath": "",
+						"injectorsPath": "",
+						"generateMockCallbackPath": ""
+					},
+					"properties": {
+						"rootPath": {
+							"type": "string",
+							"default": "./",
+							"description": "Set custom root path. Note : every other paths given in will be relative to this root path"
+						},
+						"mockPath": {
+							"type": "string",
+							"default": "",
+							"description": "Set mock Path to generate local mock server. Note : If the path points to a folder, the mock will be generated for every json files inside the given folder"
+						},
+						"envPath": {
+							"type": "string",
+							"default": "",
+							"description": "Set custom environment data folder Path. Note : The .json files inside the folder will be listed down for switching environment using `Switch environment` command"
+						},
+						"injectorsPath": {
+							"type": "string",
+							"default": "",
+							"description": "Provide the injectors.js path. Note: the js file must have an default module export of the injectors list."
+						},
+						"generateMockCallbackPath": {
+							"type": "string",
+							"default": "",
+							"description": "Provide the callback.js path. Note: the js file must have an default module export of callback method. This method will be called for each entry in HAR object."
+						}
+					},
+					"required": [
+						"rootPath",
+						"mockPath",
+						"envPath",
+						"injectorsPath",
+						"generateMockCallbackPath"
+					],
+					"additionalProperties": false
+				},
+				"fake-response-server.config.resourceTypeFilters": {
+					"type": "array",
+					"description": "Provide list of resourceTypes to generate a mock",
+					"default": [
+						"xhr"
+					],
+					"items": {
+						"type": "string"
+					},
+					"uniqueItems": true
+				},
+				"fake-response-server.config.filterSchema": {
+					"type": "object",
+					"description": "Provide schema to filter object properties"
+				},
+				"fake-response-server.config.globals": {
+					"type": "object",
+					"description": "Provide any initial values before starting the server"
+				},
+				"fake-response-server.config.groupings": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "string"
+					},
+					"default": {},
+					"description": "Provide URL mapping for Grouping Routes"
+				},
+				"fake-response-server.config.proxy.exactMatch": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "string"
+					},
+					"default": {},
+					"description": "Set custom proxy that matches the route"
+				},
+				"fake-response-server.config.proxy.patternMatch": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "string"
+					},
+					"default": {},
+					"description": "Set custom proxy that matches the pattern"
+				},
+				"fake-response-server.config.excludeRoutes.addGroupings": {
+					"type": "boolean",
+					"default": true,
+					"description": "This will add all grouping routes to the exclude routes list."
+				},
+				"fake-response-server.config.excludeRoutes.addProxyPatternMatch": {
+					"type": "boolean",
+					"default": true,
+					"description": "This will add all proxy pattern match routes to the exclude routes list."
+				},
+				"fake-response-server.config.excludeRoutes.addProxyExactMatch": {
+					"type": "boolean",
+					"default": true,
+					"description": "This will add all proxy exact match routes to the exclude routes list."
+				},
+				"fake-response-server.config.excludeRoutes.patternMatch": {
+					"type": "array",
+					"markdownDescription": "Provide list of routes to exclude form generate local server that matches this pattern",
+					"items": {
+						"type": "string"
+					},
+					"uniqueItems": true,
+					"scope": "window"
+				},
+				"fake-response-server.config.excludeRoutes.exactMatch": {
+					"type": "array",
+					"markdownDescription": "Provide list of routes to exclude form generate local server that matches this route",
+					"items": {
+						"type": "string"
+					},
+					"uniqueItems": true,
+					"scope": "window"
+				},
+				"fake-response-server.config.delay.time": {
+					"type": "number",
+					"minimum": 0,
+					"description": "Provide a common delay in milliseconds"
+				},
+				"fake-response-server.config.delay.override": {
+					"type": "boolean",
+					"default": false,
+					"description": "If true, it overrides all specific delays provided in the injectors."
+				},
+				"fake-response-server.config.showOnStatusbar": {
+					"type": "boolean",
+					"default": true,
+					"description": "Change this to false if you don't want the button to show in statusbar"
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
@@ -201,6 +244,6 @@
 	},
 	"dependencies": {
 		"@types/express": "^4.17.8",
-		"fake-response": "^5.1.7"
+		"fake-response": "^6.1.0"
 	}
 }
