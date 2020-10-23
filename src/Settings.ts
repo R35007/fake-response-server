@@ -88,28 +88,23 @@ export class Settings {
   static get rootPath() {
     const rootPathStr = Settings.getSettings("paths.rootPath") as string;
     const workSpaceFolderPath = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : "./";
-    return Settings.getValidPath("fake-response-server.settings.paths.rootPath", workSpaceFolderPath, rootPathStr) || workSpaceFolderPath;
+    return Settings.getValidPath("rootPath", workSpaceFolderPath, rootPathStr) || workSpaceFolderPath;
   }
   static get mockPath() {
     const mockPathStr = Settings.getSettings("paths.mockPath") as string;
-    return Settings.getValidPath("fake-response-server.settings.paths.mockPath", Settings.rootPath, mockPathStr) || "";
+    return Settings.getValidPath("mockPath", Settings.rootPath, mockPathStr) || "";
   }
   static get envPath() {
     const envPathStr = Settings.getSettings("paths.envPath") as string;
-    return Settings.getValidPath("fake-response-server.settings.paths.envPath", Settings.rootPath, envPathStr) || "";
+    return Settings.getValidPath("envPath", Settings.rootPath, envPathStr) || "";
   }
   static get injectorsPath() {
     const injectorsPathStr = Settings.getSettings("paths.injectorsPath") as string;
-    return Settings.getValidPath("fake-response-server.settings.paths.injectorsPath", Settings.rootPath, injectorsPathStr, true);
+    return Settings.getValidPath("injectorsPath", Settings.rootPath, injectorsPathStr, true);
   }
   static get callbackPath() {
     const callbackPathPathStr = Settings.getSettings("paths.generateMockCallbackPath") as string;
-    return Settings.getValidPath(
-      "fake-response-server.settings.paths.generateMockCallbackPath",
-      Settings.rootPath,
-      callbackPathPathStr,
-      true
-    );
+    return Settings.getValidPath("generateMockCallbackPath", Settings.rootPath, callbackPathPathStr, true);
   }
   static get injectors() {
     const injectorsPath = Settings.injectorsPath;
@@ -143,21 +138,16 @@ export class Settings {
   static getValidPath(settingsName: string, rootPath: string, relativePath: string, shouldBeFile: boolean = false) {
     if (relativePath && relativePath.trim().length) {
       const resolvedPath = path.resolve(rootPath, relativePath);
-      if (fs.existsSync(resolvedPath) && fs.statSync(resolvedPath).isFile() === shouldBeFile) {
-        if (shouldBeFile && path.extname(resolvedPath) !== ".js") {
-          Prompt.showPopupMessage(
-            `Invalid Path - ${resolvedPath}. Please provide a valid .js file Path in settings '${settingsName}'.`,
-            "error"
-          );
+      if (fs.existsSync(resolvedPath)) {
+        if (shouldBeFile && !fs.statSync(resolvedPath).isFile() && path.extname(resolvedPath) !== ".js") {
+          Prompt.showPopupMessage(`Invalid ${settingsName} - ${resolvedPath}`, "error");
           return undefined;
         }
         return resolvedPath;
       }
-      Prompt.showPopupMessage(`Invalid Path - ${resolvedPath}'.\nPlease provide a valid path in settings '${settingsName}`, "error");
+      Prompt.showPopupMessage(`Invalid ${settingsName} - ${resolvedPath}`, "error");
       return undefined;
     } else {
-      if (settingsName === "fake-response-server.settings.paths.mockPath" || settingsName === "fake-response-server.settings.paths.envPath")
-        Prompt.showPopupMessage(`Please provide path in settings '${settingsName}'`, "error");
       return undefined;
     }
   }
