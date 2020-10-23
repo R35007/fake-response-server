@@ -52,7 +52,7 @@ This command gets the generated routes list after starting the server.
 If any changes done to the mock please start again to refresh the server.
 To send the request and see the response you need `Rest Client` vs code extension.
 
-![Get Routes List](https://github.com/R35007/fake-response-server/blob/master/images/get_routes_list_preview.gif?raw=true)
+![Get Routes List](https://github.com/R35007/fake-response-server/blob/master/images/get_routes_list.gif?raw=true)
 
 ### `Filter By Schema`
 
