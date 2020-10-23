@@ -1,34 +1,43 @@
 import * as vscode from "vscode";
-import * as path from "path";
+import { Settings } from "./Settings";
 
 export class Prompt {
-  window;
-
-  constructor() {
-    this.window = vscode.window;
-  }
-
-  getFileName = async (extensions: string[]) => {
-    const fileName = await vscode.window.showInputBox({
-      value: "",
-      placeHolder: "File Name",
-      validateInput: (text) => {
-        return text.length && extensions.indexOf(path.extname(text) || extensions[0]) < 0 ? text : null;
-      },
+  static getFilePath = async (extensions: string[]) => {
+    const defaultUri = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri : undefined;
+    const filters = { Type: extensions.map((e) => e.slice(1)) };
+    const filePaths = await vscode.window.showOpenDialog({
+      defaultUri,
+      filters,
+      title: "Please select .json or .http file to paste the generated data",
     });
 
-    return fileName && !path.extname(fileName).length ? fileName + `${extensions[0]}` : fileName;
+    const filePath = filePaths && filePaths[0].fsPath.toString();
+    return filePath;
   };
 
-  shouldSaveAsNewFile = () => {
+  static shouldSaveAsNewFile = () => {
     return vscode.window.showQuickPick(["no", "yes"], {
       placeHolder: "Create a new File ?",
     });
   };
 
-  getEnvironment = async (envNameList: string[]) => {
+  static getEnvironment = async (envNameList: string[]) => {
     return vscode.window.showQuickPick(envNameList, {
       placeHolder: "Please select any environment",
     });
+  };
+
+  static showPopupMessage = (message: string, action: "info" | "warning" | "error") => {
+    if (action === "info") {
+      const dontshowTxt = "Don't show again";
+      !Settings.donotShowInfoMsg &&
+        vscode.window.showInformationMessage(message, dontshowTxt).then((choice) => {
+          choice && choice === dontshowTxt && (Settings.donotShowInfoMsg = true);
+        });
+    } else if (action === "error") {
+      vscode.window.showErrorMessage(message);
+    } else if (action === "warning") {
+      vscode.window.showWarningMessage(message);
+    }
   };
 }

@@ -1,4 +1,4 @@
-import { Valid_Config, Injectors } from "fake-response/dist/model";
+import { Config, Injectors } from "fake-response/dist/model";
 
 export interface ExtensionProperties {
   saveAsNewFile: boolean;
@@ -8,7 +8,7 @@ export interface ExtensionProperties {
     resourceTypeFilters: string[];
     callback: any;
   };
-  config: Valid_Config;
+  config: Config;
   paths: Paths;
 
   injectors: Injectors[];

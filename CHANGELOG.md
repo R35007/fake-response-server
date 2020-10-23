@@ -1,3 +1,19 @@
+## v0.0.4
+
+- settings are renamed from `fakeResponse.xxx` to `fake-response-server.settings.xxx`
+- uses node package `fake-response@6.2.2`
+- provide callback method to generate mock.
+- implemented environment switch.
+- proxy and groupings are added to exclude routes by default.
+- provide a injectors to generate local mock server.
+- open file to generate a data.
+- popup message.
+- show and hide statusbar.
+- show and hide info message.
+- added more customizations in settings.
+- code optimized.
+- bug fix.
+
 ## v0.0.3
 
 - added `fakeResponse.generateMock.resourceTypeFilters` - to filter resourceType while generating mock.

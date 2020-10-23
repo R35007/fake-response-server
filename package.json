@@ -72,17 +72,22 @@
 		"configuration": {
 			"title": "Fake Response Server",
 			"properties": {
-				"fake-response-server.config.port": {
+				"fake-response-server.settings.port": {
 					"type": "number",
 					"default": 3000,
 					"description": "Set custom port to generate local mock server"
 				},
-				"fake-response-server.config.baseUrl": {
+				"fake-response-server.settings.environment": {
+					"type": "string",
+					"default": "none",
+					"description": "Set custom mock environment."
+				},
+				"fake-response-server.settings.baseUrl": {
 					"type": "string",
 					"default": "",
 					"description": "Set custom base url. This url will be added as a prefix to every routes"
 				},
-				"fake-response-server.config.paths": {
+				"fake-response-server.settings.paths": {
 					"type": "object",
 					"default": {
 						"rootPath": "./",
@@ -118,16 +123,9 @@
 							"description": "Provide the callback.js path. Note: the js file must have an default module export of callback method. This method will be called for each entry in HAR object."
 						}
 					},
-					"required": [
-						"rootPath",
-						"mockPath",
-						"envPath",
-						"injectorsPath",
-						"generateMockCallbackPath"
-					],
 					"additionalProperties": false
 				},
-				"fake-response-server.config.resourceTypeFilters": {
+				"fake-response-server.settings.resourceTypeFilters": {
 					"type": "array",
 					"description": "Provide list of resourceTypes to generate a mock",
 					"default": [
@@ -138,15 +136,15 @@
 					},
 					"uniqueItems": true
 				},
-				"fake-response-server.config.filterSchema": {
+				"fake-response-server.settings.filterSchema": {
 					"type": "object",
 					"description": "Provide schema to filter object properties"
 				},
-				"fake-response-server.config.globals": {
+				"fake-response-server.settings.globals": {
 					"type": "object",
 					"description": "Provide any initial values before starting the server"
 				},
-				"fake-response-server.config.groupings": {
+				"fake-response-server.settings.groupings": {
 					"type": "object",
 					"additionalProperties": {
 						"type": "string"
@@ -154,7 +152,7 @@
 					"default": {},
 					"description": "Provide URL mapping for Grouping Routes"
 				},
-				"fake-response-server.config.proxy.exactMatch": {
+				"fake-response-server.settings.proxy.exactMatch": {
 					"type": "object",
 					"additionalProperties": {
 						"type": "string"
@@ -162,7 +160,7 @@
 					"default": {},
 					"description": "Set custom proxy that matches the route"
 				},
-				"fake-response-server.config.proxy.patternMatch": {
+				"fake-response-server.settings.proxy.patternMatch": {
 					"type": "object",
 					"additionalProperties": {
 						"type": "string"
@@ -170,22 +168,22 @@
 					"default": {},
 					"description": "Set custom proxy that matches the pattern"
 				},
-				"fake-response-server.config.excludeRoutes.addGroupings": {
+				"fake-response-server.settings.excludeRoutes.addGroupings": {
 					"type": "boolean",
 					"default": true,
-					"description": "This will add all grouping routes to the exclude routes list."
+					"description": "If true, This will add all grouping routes to the exclude routes list."
 				},
-				"fake-response-server.config.excludeRoutes.addProxyPatternMatch": {
+				"fake-response-server.settings.excludeRoutes.addProxyPatternMatch": {
 					"type": "boolean",
 					"default": true,
-					"description": "This will add all proxy pattern match routes to the exclude routes list."
+					"description": "If true, This will add all proxy pattern match routes to the exclude routes list."
 				},
-				"fake-response-server.config.excludeRoutes.addProxyExactMatch": {
+				"fake-response-server.settings.excludeRoutes.addProxyExactMatch": {
 					"type": "boolean",
 					"default": true,
-					"description": "This will add all proxy exact match routes to the exclude routes list."
+					"description": "If true, This will add all proxy exact match routes to the exclude routes list."
 				},
-				"fake-response-server.config.excludeRoutes.patternMatch": {
+				"fake-response-server.settings.excludeRoutes.patternMatch": {
 					"type": "array",
 					"markdownDescription": "Provide list of routes to exclude form generate local server that matches this pattern",
 					"items": {
@@ -194,7 +192,7 @@
 					"uniqueItems": true,
 					"scope": "window"
 				},
-				"fake-response-server.config.excludeRoutes.exactMatch": {
+				"fake-response-server.settings.excludeRoutes.exactMatch": {
 					"type": "array",
 					"markdownDescription": "Provide list of routes to exclude form generate local server that matches this route",
 					"items": {
@@ -203,20 +201,25 @@
 					"uniqueItems": true,
 					"scope": "window"
 				},
-				"fake-response-server.config.delay.time": {
+				"fake-response-server.settings.commonDelay": {
 					"type": "number",
 					"minimum": 0,
 					"description": "Provide a common delay in milliseconds"
 				},
-				"fake-response-server.config.delay.override": {
+				"fake-response-server.settings.overrideCommonDelay": {
 					"type": "boolean",
 					"default": false,
 					"description": "If true, it overrides all specific delays provided in the injectors."
 				},
-				"fake-response-server.config.showOnStatusbar": {
+				"fake-response-server.settings.showOnStatusbar": {
 					"type": "boolean",
 					"default": true,
 					"description": "Change this to false if you don't want the button to show in statusbar"
+				},
+				"fake-response-server.settings.donotShowInfoMsg": {
+					"type": "boolean",
+					"default": false,
+					"description": "Change this to true if you don't want to show information pop up messages."
 				}
 			}
 		}
@@ -244,6 +247,6 @@
 	},
 	"dependencies": {
 		"@types/express": "^4.17.8",
-		"fake-response": "^6.1.0"
+		"fake-response": "^6.2.2"
 	}
 }

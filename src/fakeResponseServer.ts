@@ -1,27 +1,16 @@
-import { FakeResponse } from "fake-response";
 import { HAR } from "fake-response/dist/model";
-import * as fs from "fs";
-import * as vscode from "vscode";
 import { filterBySchemaID, generateMockID, getRoutesListID } from "./enum";
-import { EnvironmentFileStats, ExtensionProperties } from "./model";
+import { Prompt } from "./prompt";
+import { Settings } from "./Settings";
 import { StatusbarUi } from "./StatusBarUI";
 import { Utils } from "./utils";
 
 export class FakeResponseServer extends Utils {
-  fakeResponse: FakeResponse;
-  statusBarUi: StatusbarUi;
-  statusBarItem: vscode.StatusBarItem;
-
-  isServerStarted = false;
-  environmentList: EnvironmentFileStats[] = [];
-  environment = "none";
+  private isServerStarted = false;
 
   constructor() {
     super();
-    const props = this.getExtensionProperties();
-    this.fakeResponse = new FakeResponse();
-    this.statusBarUi = new StatusbarUi(props.showOnStatusbar);
-    this.statusBarItem = this.statusBarUi.statusBarItem;
+    StatusbarUi.Init();
   }
 
   generateMockFromHAR = async () => {
@@ -29,12 +18,11 @@ export class FakeResponseServer extends Utils {
     if (writables) {
       const { editorText, fileName, editor, document, textRange } = writables;
       try {
-        const { resourceTypeFilters, callback } = this.getExtensionProperties().generateMock;
         const harObject = JSON.parse(editorText) as HAR;
-        const mock = this.fakeResponse.transformHar(harObject, resourceTypeFilters, callback);
+        const mock = this.fakeResponse.transformHar(harObject, Settings.resourceTypeFilters, Settings.callback);
         this.writeFile(JSON.stringify(mock, null, "\t"), fileName, "Mock generated Successfully", editor, document, textRange);
       } catch (err) {
-        this.window.showErrorMessage("Failed to generate mock. ", err);
+        Prompt.showPopupMessage(`Failed to generate mock. \n${err.message}`, "error");
       }
     }
   };
@@ -44,11 +32,10 @@ export class FakeResponseServer extends Utils {
     if (writables) {
       const { editorText, fileName, editor, document, textRange } = writables;
       try {
-        const { filterSchema } = this.getExtensionProperties();
-        const filteredObject = this.fakeResponse.filterBySchema(JSON.parse(editorText), filterSchema);
+        const filteredObject = this.fakeResponse.filterBySchema(JSON.parse(editorText), Settings.filterSchema);
         this.writeFile(JSON.stringify(filteredObject, null, "\t"), fileName, "Filtered Successfully", editor, document, textRange);
       } catch (err) {
-        this.window.showErrorMessage("Failed to Filter", err);
+        Prompt.showPopupMessage(`Failed to Filter. \n${err.message}`, "error");
       }
     }
   };
@@ -79,87 +66,81 @@ Total Resources = ${totalUniqueRoutes.length} resources.
 
         this.writeFile(routesList, fileName, "Routes List Fetched Successfully", editor, document, textRange);
       } catch (err) {
-        this.window.showErrorMessage("Failed to Fetch Routes", err);
+        Prompt.showPopupMessage(`Failed to Fetch Routes. \n${err.message}`, "error");
       }
     }
   };
 
-  startServer = (txt: string) => {
-    const {
-      paths: { mockPath },
-      config,
-      injectors,
-      globals,
-    } = this.getExtensionProperties();
-    if (mockPath.length) {
-      this.statusBarUi.Working(`${txt}ing...`);
-      const mock = this.getMockFromPath(mockPath, this.environment, this.environmentList, this.fakeResponse);
-      this.fakeResponse.setData(mock, config, injectors, globals);
-      this.fakeResponse
-        .launchServer()
-        .then(() => {
-          this.isServerStarted = true;
-          const statusMsg = `Server is ${txt}ed at port : ${config.port}`;
-          this.statusBarUi.stopServer(1000, config.port, statusMsg);
-        })
-        .catch((err) => {
-          this.statusBarUi.startServer(0);
-          this.window.showErrorMessage(`Server Failed to ${txt}`, err);
-        });
-    } else {
-      this.window.showErrorMessage("Please Provide a mock path in settings");
+  startServer = async (txt: string) => {
+    try {
+      if (Settings.mockPath.length) {
+        StatusbarUi.Working(`${txt}ing...`);
+        const mock = this.getMockFromPath(Settings.mockPath);
+        this.fakeResponse.setData(mock, Settings.config, Settings.injectors, Settings.globals);
+
+        await this.fakeResponse.launchServer();
+
+        this.isServerStarted = true;
+        const statusMsg = `Server is ${txt}ed at port : ${Settings.port}`;
+        StatusbarUi.stopServer(1000, Settings.port, () => Prompt.showPopupMessage(statusMsg, "info"));
+      }
+    } catch (err) {
+      const statusMsg = `Server Failed to ${txt}. \n ${err.message}`;
+      StatusbarUi.startServer(0, () => Prompt.showPopupMessage(statusMsg, "error"));
     }
   };
 
-  stopServer = () => {
-    const { config } = this.getExtensionProperties();
-    if (this.isServerStarted) {
-      this.statusBarUi.Working("Stopping...");
-      this.fakeResponse
-        .stopServer()
-        .then(() => {
-          this.isServerStarted = false;
-          this.statusBarUi.startServer(1000, "Server is Stopped");
-        })
-        .catch((err) => {
-          this.statusBarUi.stopServer(0, config.port);
-          this.window.showInformationMessage("Failed to Stop", err);
-        });
-    } else {
-      this.window.showErrorMessage("No Server to Stop");
-    }
-  };
+  stopServer = async () => {
+    try {
+      if (this.isServerStarted) {
+        StatusbarUi.Working("Stopping...");
 
-  restartServer = () => {
-    if (this.isServerStarted) {
-      this.fakeResponse.stopServer().then(() => {
+        await this.fakeResponse.stopServer();
+
         this.isServerStarted = false;
-        this.statusBarUi.startServer(1000);
-        this.startServer("Re Start");
-      });
+        StatusbarUi.startServer(1000, () => Prompt.showPopupMessage("Server is Stopped", "info"));
+      } else {
+        Prompt.showPopupMessage("No Server to Stop.", "error");
+      }
+    } catch (err) {
+      const statsMsg = `Failed to Stop. \n${err.message}`;
+      StatusbarUi.stopServer(0, Settings.port, () => Prompt.showPopupMessage(statsMsg, "error"));
+    }
+  };
+
+  restartServer = async () => {
+    if (this.isServerStarted) {
+      await this.fakeResponse.stopServer();
+      this.isServerStarted = false;
+      StatusbarUi.startServer(1000);
+      this.startServer("Re Start");
     } else {
       this.startServer("Start");
     }
   };
 
   switchEnvironment = async () => {
-    const {
-      paths: { envPath },
-    } = this.getExtensionProperties();
-    const envList = this.getJsonFilesFromFolder(envPath);
-    if (envList && envList.length) {
-      this.environmentList = envList;
-      const environmentList = [...envList.map((e) => e.fileName), "none"];
+    if (Settings.envPath.length) {
+      const envList = this.getEnvironmentList();
+      if (envList && envList.length) {
+        const environmentList = [...new Set(["none", ...envList.map((e) => e.fileName)])];
 
-      // making the selected environment to appear in first of the list
-      const selectedEnvIndex = environmentList.findIndex((e) => e === this.environment);
-      environmentList.splice(selectedEnvIndex, 1);
-      environmentList.unshift(this.environment);
+        // making the selected environment to appear in first of the list
+        const selectedEnvIndex = environmentList.findIndex((e) => e === Settings.environment.toLowerCase());
+        if (selectedEnvIndex >= 0) {
+          environmentList.splice(selectedEnvIndex, 1);
+          environmentList.unshift(Settings.environment.toLowerCase());
+        } else {
+          Settings.environment = "none";
+        }
 
-      const env = await this.getEnvironment(environmentList);
-      if (env) {
-        this.environment = env;
-        this.isServerStarted && this.restartServer();
+        const env = await Prompt.getEnvironment(environmentList);
+        if (env) {
+          this.environment = env.toLowerCase();
+          this.isServerStarted && this.restartServer();
+        }
+      } else {
+        Prompt.showPopupMessage("No Environment Found", "error");
       }
     }
   };

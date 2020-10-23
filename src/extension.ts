@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { filterBySchemaID, generateMockID, getRoutesListID, startServerID, stopServerID, switchEnvironmentID } from "./enum";
 import { FakeResponseServer } from "./fakeResponseServer";
+import { StatusbarUi } from "./StatusBarUI";
 
 export function activate({ subscriptions }: vscode.ExtensionContext) {
   const fakeResponseServer = new FakeResponseServer();
@@ -24,6 +25,6 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
   subscriptions.push(vscode.commands.registerCommand(switchEnvironmentID, fakeResponseServer.switchEnvironment));
 
   // show status bar
-  subscriptions.push(fakeResponseServer.statusBarItem);
+  subscriptions.push(StatusbarUi.statusBarItem);
 }
 export function deactivate() {}

@@ -2,84 +2,88 @@
 
 This extension helps to generate mock from HAR file and generate a local mock server.
 This also helps to filter any JSON file using the filter schema.
+This extension is a wraper over for the node package `fake-response@6.2.2`.
+
+Please visit [https://r35007.github.io/Fake-Response/](https://r35007.github.io/Fake-Response/) for further information.
 
 ## Table of contents
 
 - [Commands](#commands)
+  - [Start/Stop Server](#start/stop-server)
+  - [Refresh/Restart Server](#Refresh/ReStart-server)
+  - [Switch Environment](#switch-environment)
   - [Generate Mock](#generate-mock)
-  - [Start Server](#start-server)
-  - [Get Generated Routes List](#get-generated-routes-list)
-  - [Restart Server](#restart-server)
-  - [Stop Server](#stop-server)
   - [Filter By Schema](#filter-by-schema)
+  - [Get Routes List](#get-routes-list)
 - [Settings](#settings)
-  - [fakeResponse.saveAsNewFile](#fakeresponse.saveasnewfile)
-  - [fakeResponse.filterSchema](#fakeresponse.filterschema)
-  - [fakeResponse.mockPath](#fakeresponse.mockpath)
-  - [fakeResponse.injectorsPath](#fakeresponse.injectorspath)
-  - [fakeResponse.globals](#fakeresponse.globals)
-  - [fakeResponse.config.port](#fakeresponse.config.port)
-  - [fakeResponse.config.baseUrl](#fakeresponse.config.baseurl)
-  - [fakeResponse.config.env](#fakeresponse.config.env)
-  - [fakeResponse.config.groupings](#fakeresponse.config.groupings)
-  - [fakeResponse.config.proxy](#fakeresponse.config.proxy)
-  - [fakeResponse.config.excludeRoutes.patternMatch](#fakeresponse.config.excluderoutes.patternmatch)
-  - [fakeResponse.config.excludeRoutes.exactMatch](#fakeresponse.config.excluderoutes.exactmatch)
-  - [fakeResponse.config.delay.time](#fakeresponse.config.delay.time)
-  - [fakeResponse.config.delay.excludeRoutes.patternMatch](#fakeresponse.config.delay.excluderoutes.patternmatch)
-  - [fakeResponse.config.delay.excludeRoutes.exactMatch](#fakeresponse.config.delay.excluderoutes.exactmatch)
-- [Reference](#reference)
+  - [fake-response-server.settings.filterSchema](#fake-response-server.settings.filterschema)
+  - [fake-response-server.settings.injectorsPath](#fake-response-server.settings.injectorspath)
+  - [fake-response-server.settings.generateMockCallbackPath](#fake-response-server.settings.generatemockcallbackpath)
 
 ## Commands
 
-### `Generate Mock`
-
-This command helps to generate a mock data from HAR file.
-
-![Generate Mock](https://github.com/R35007/fake-response-server/blob/master/images/generate_mock_preview.gif?raw=true)
-
-### `Start Server`
+### `Start/Stop Server`
 
 This command generates a local mock server from the given `fakeResponse.mockPath` in the vs code settings.
 
-![Start Server](https://github.com/R35007/fake-response-server/blob/master/images/start_mock_server_preview.gif?raw=true)
+![Start or Stop Server](https://github.com/R35007/fake-response-server/blob/master/images/start_stop.gif?raw=true)
 
-### `Get Generated Routes List`
+### `Refresh/Restart Server`
+
+This command restarts a local mock server. If any changes done to the settings or mock data please restart the server.
+
+![Refresh or Restart Server](https://github.com/R35007/fake-response-server/blob/master/images/refresh_restart.gif?raw=true)
+
+### `Switch Environment`
+
+This command switches the mock data point environment files that are provided in the `fake-response-server.settings.paths.envPath` folder. You can also switch environment via `fake-response-server.settings.environment`
+
+![Switch Environment](https://github.com/R35007/fake-response-server/blob/master/images/switch_environment.gif?raw=true)
+
+### `Generate Mock`
+
+This command helps to generate a mock data from HAR file. NOTE: The HAR file size must not be more than 4MB.
+
+![Generate Mock](https://github.com/R35007/fake-response-server/blob/master/images/generate_mock.gif?raw=true)
+
+### `Get Routes List`
 
 This command gets the generated routes list after starting the server.
 If any changes done to the mock please start again to refresh the server.
+To send the request and see the response you need `Rest Client` vs code extension.
 
-![Get Generated Routes List](https://github.com/R35007/fake-response-server/blob/master/images/get_generated_routes_list_preview.gif?raw=true)
-
-### `Stop Server`
-
-Using this command stop any running server.
+![Get Routes List](https://github.com/R35007/fake-response-server/blob/master/images/get_routes_list_preview.gif?raw=true)
 
 ### `Filter By Schema`
 
 This command helps to filter any JSON file by using the schema provided from the vs code settings `fakeResponse.filterSchema`
 
-![Filter JSON](https://github.com/R35007/fake-response-server/blob/master/images/filter_preview.gif?raw=true)
+![Filter JSON](https://github.com/R35007/fake-response-server/blob/master/images/filter_by_schema.gif?raw=true)
 
 ## Settings
 
-### `fakeResponse.saveAsNewFile`
+### `fake-response-server.settings.filterSchema`
 
-If true the commands like `'Generate Mock'`, `'Filter By Schema'`, `'Get Generated Routes List'` will be generate in a new file.
+set the object property to be `true` that you want to show. The others would get filtered away.
 
-### `fakeResponse.filterSchema`
+- in `settings.json`
 
-set the object property to be `true` that you want to show. The others would get filtered away
+```json
+"fake-response-server.settings.filterSchema":{
+  "parent":{
+    "child":{
+      "foo" : true,
+      "bar" : false
+    }
+  }
+}
+```
 
-### `fakeResponse.mockPath`
+### `fake-response-server.settings.injectorsPath`
 
-set the mock path here. any JSON inside the folder or file will be generate as a local mock server by the `Start Server` command
+Provide the .js file path to `fake-response-server.settings.injectorsPath` in `settings.json` that default exports the injectors module.
 
-### `fakeResponse.injectorsPath`
-
-Provide the .js file path that default exports the injectors module.
-
-- For Example: create a injectors.js
+- For Example: create a `injectors.js`
 
 ```js
 
@@ -94,54 +98,15 @@ module.exports = [
 
 Now provide the js path in the settings.
 
-### `fakeResponse.globals`
+### `fake-response-server.settings.generateMockCallbackPath`
 
-This object helps to set initial value before generating a mock server.
+Provide the .js file path to `fake-response-server.settings.generateMockCallbackPath` in the `settings.json` that default exports the callack method in the module.
+This callback method is triggred for each entry in the HAR data. This helps to manipulate the data while generating the mock.
 
-### `fakeResponse.config.port`
+- For Example: create a `callback.js`
 
-Provide your port to generate a local mock server. default `3000`
-
-### `fakeResponse.config.rootPath`
-
-Provide the rootPath. The mock path will be relative to this path
-
-### `fakeResponse.config.baseUrl`
-
-set the base url for every generated routes
-
-### `fakeResponse.config.env`
-
-Provide Mock Environment
-
-### `fakeResponse.config.groupings`
-
-Provide URL mapping for Grouping Routes
-
-### `fakeResponse.config.proxy`
-
-Set your proxy here
-
-### `fakeResponse.config.excludeRoutes.patternMatch`
-
-Provide list of routes to exclude form generate local server that matches this pattern
-
-### `fakeResponse.config.excludeRoutes.exactMatch`
-
-Provide list of routes to exclude form generate local server that matches this route
-
-### `fakeResponse.config.delay.time`
-
-Provide a common delay in milliseconds
-
-### `fakeResponse.config.delay.excludeRoutes.patternMatch`
-
-Provide list of routes to exclude for delay that matches this pattern
-
-### `fakeResponse.config.delay.excludeRoutes.exactMatch`
-
-Provide list of routes to exclude for delay that matches this route
-
-## Reference
-
-For any other further doubts regarding the settings please visit [https://r35007.github.io/Fake-Response/](https://r35007.github.io/Fake-Response/)
+```js
+module.exports = (entry, route, response) => {
+  return { [route]: response }; // return {} If you want that to entry to filter it out.
+};
+```
