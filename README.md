@@ -17,14 +17,14 @@ Please visit [https://r35007.github.io/Fake-Response/](https://r35007.github.io/
   - [Get Routes List](#get-routes-list)
 - [Settings](#settings)
   - [fake-response-server.settings.filterSchema](#fake-response-server.settings.filterschema)
-  - [fake-response-server.settings.injectorsPath](#fake-response-server.settings.injectorspath)
-  - [fake-response-server.settings.generateMockCallbackPath](#fake-response-server.settings.generatemockcallbackpath)
+  - [fake-response-server.settings.paths.injectorsPath](#fake-response-server.settings.paths.injectorspath)
+  - [fake-response-server.settings.paths.generateMockCallbackPath](#fake-response-server.settings.paths.generatemockcallbackpath)
 
 ## Commands
 
 ### `Start/Stop Server`
 
-This command generates a local mock server from the given `fakeResponse.mockPath` in the vs code settings.
+This command generates a local mock server from the given `fake-response-server.settings.paths.mockPath` in the vs code settings.
 
 ![Start or Stop Server](https://github.com/R35007/fake-response-server/blob/master/images/start_stop.gif?raw=true)
 
@@ -42,7 +42,7 @@ This command switches the mock data point environment files that are provided in
 
 ### `Generate Mock`
 
-This command helps to generate a mock data from HAR file. NOTE: The HAR file size must not be more than 4MB.
+This command helps to generate a mock data from HAR file. NOTE: The HAR file size must be less than 5MB.
 
 ![Generate Mock](https://github.com/R35007/fake-response-server/blob/master/images/generate_mock.gif?raw=true)
 
@@ -56,7 +56,7 @@ To send the request and see the response you need `Rest Client` vs code extensio
 
 ### `Filter By Schema`
 
-This command helps to filter any JSON file by using the schema provided from the vs code settings `fakeResponse.filterSchema`
+This command helps to filter any JSON file by using the schema provided from the vs code settings `fake-response-server.settings.filterSchema`
 
 ![Filter JSON](https://github.com/R35007/fake-response-server/blob/master/images/filter_by_schema.gif?raw=true)
 
@@ -79,9 +79,9 @@ set the object property to be `true` that you want to show. The others would get
 }
 ```
 
-### `fake-response-server.settings.injectorsPath`
+### `fake-response-server.settings.paths.injectorsPath`
 
-Provide the .js file path to `fake-response-server.settings.injectorsPath` in `settings.json` that default exports the injectors module.
+Provide the .js file path to `fake-response-server.settings.paths.injectorsPath` in `settings.json` that default exports the injectors module.
 
 - For Example: create a `injectors.js`
 
@@ -98,9 +98,9 @@ module.exports = [
 
 Now provide the js path in the settings.
 
-### `fake-response-server.settings.generateMockCallbackPath`
+### `fake-response-server.settings.paths.generateMockCallbackPath`
 
-Provide the .js file path to `fake-response-server.settings.generateMockCallbackPath` in the `settings.json` that default exports the callack method in the module.
+Provide the .js file path to `fake-response-server.settings.paths.generateMockCallbackPath` in the `settings.json` that default exports the callack method in the module.
 This callback method is triggred for each entry in the HAR data. This helps to manipulate the data while generating the mock.
 
 - For Example: create a `callback.js`

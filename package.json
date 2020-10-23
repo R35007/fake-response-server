@@ -185,7 +185,7 @@
 				},
 				"fake-response-server.settings.excludeRoutes.patternMatch": {
 					"type": "array",
-					"markdownDescription": "Provide list of routes to exclude form generate local server that matches this pattern",
+					"description": "Provide list of routes to exclude form generate local server that matches this pattern",
 					"items": {
 						"type": "string"
 					},
@@ -194,7 +194,7 @@
 				},
 				"fake-response-server.settings.excludeRoutes.exactMatch": {
 					"type": "array",
-					"markdownDescription": "Provide list of routes to exclude form generate local server that matches this route",
+					"description": "Provide list of routes to exclude form generate local server that matches this route",
 					"items": {
 						"type": "string"
 					},
