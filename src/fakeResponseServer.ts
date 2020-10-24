@@ -82,7 +82,7 @@ Total Resources = ${totalUniqueRoutes.length} resources.
 
         this.isServerStarted = true;
         const statusMsg = `Server is ${txt}ed at port : ${Settings.port}`;
-        StatusbarUi.stopServer(300, Settings.port, () => Prompt.showPopupMessage(statusMsg, "info"));
+        StatusbarUi.stopServer(150, Settings.port, () => Prompt.showPopupMessage(statusMsg, "info"));
       } else {
         Prompt.showPopupMessage(`'fake-response-server.settings.paths.mockPath' - Please provide a valid path here`, "error");
       }
@@ -100,7 +100,7 @@ Total Resources = ${totalUniqueRoutes.length} resources.
         await this.fakeResponse.stopServer();
 
         this.isServerStarted = false;
-        StatusbarUi.startServer(300, () => Prompt.showPopupMessage("Server is Stopped", "info"));
+        StatusbarUi.startServer(150, () => Prompt.showPopupMessage("Server is Stopped", "info"));
       } else {
         Prompt.showPopupMessage("No Server to Stop.", "error");
       }
@@ -114,7 +114,7 @@ Total Resources = ${totalUniqueRoutes.length} resources.
     if (this.isServerStarted) {
       await this.fakeResponse.stopServer();
       this.isServerStarted = false;
-      StatusbarUi.startServer(300);
+      StatusbarUi.startServer(150);
       this.startServer("Re Start");
     } else {
       this.startServer("Start");
