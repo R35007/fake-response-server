@@ -15,7 +15,7 @@ export class StatusbarUi {
 
   static Init() {
     StatusbarUi.Working("loading...");
-    StatusbarUi.startServer(1000);
+    StatusbarUi.startServer(500);
   }
 
   static Working(workingMsg = "Working on it...") {

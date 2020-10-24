@@ -46,27 +46,33 @@
 		"commands": [
 			{
 				"command": "fakeResponse.generateMockFromHAR",
-				"title": "FakeResponse : Generate Mock from HAR"
+				"title": "Generate Mock from HAR",
+				"category": "FakeResponse"
 			},
 			{
 				"command": "fakeResponse.filterBySchema",
-				"title": "FakeResponse : Filter By Schema"
+				"title": "Filter By Schema",
+				"category": "FakeResponse"
 			},
 			{
 				"command": "fakeResponse.startServer",
-				"title": "FakeResponse : Start Server"
+				"title": "Start Server",
+				"category": "FakeResponse"
 			},
 			{
 				"command": "fakeResponse.stopServer",
-				"title": "FakeResponse : Stop Server"
+				"title": "Stop Server",
+				"category": "FakeResponse"
 			},
 			{
 				"command": "fakeResponse.switchEnvironment",
-				"title": "FakeResponse : Switch Environment"
+				"title": "Switch Environment",
+				"category": "FakeResponse"
 			},
 			{
 				"command": "fakeResponse.getRoutesList",
-				"title": "FakeResponse : Get Routes List"
+				"title": "Get Routes List",
+				"category": "FakeResponse"
 			}
 		],
 		"configuration": {
