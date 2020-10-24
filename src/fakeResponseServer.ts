@@ -10,7 +10,7 @@ export class FakeResponseServer extends Utils {
 
   constructor() {
     super();
-    StatusbarUi.Init();
+    StatusbarUi.init();
   }
 
   generateMockFromHAR = async () => {
@@ -74,7 +74,7 @@ Total Resources = ${totalUniqueRoutes.length} resources.
   startServer = async (txt: string) => {
     try {
       if (Settings.mockPath.length) {
-        StatusbarUi.Working(`${txt}ing...`);
+        StatusbarUi.working(`${txt}ing...`);
         const mock = this.getMockFromPath(Settings.mockPath);
         this.fakeResponse.setData(mock, Settings.config, Settings.injectors, Settings.globals);
 
@@ -95,7 +95,7 @@ Total Resources = ${totalUniqueRoutes.length} resources.
   stopServer = async () => {
     try {
       if (this.isServerStarted) {
-        StatusbarUi.Working("Stopping...");
+        StatusbarUi.working("Stopping...");
 
         await this.fakeResponse.stopServer();
 

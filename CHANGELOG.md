@@ -1,3 +1,8 @@
+## v0.0.5
+
+- updated MIT `LICENSE`
+- lint fixes
+
 ## v0.0.4
 
 - settings are renamed from `fakeResponse.xxx` to `fake-response-server.settings.xxx`

@@ -13,12 +13,12 @@ export class StatusbarUi {
     return StatusbarUi._statusBarItem;
   }
 
-  static Init() {
-    StatusbarUi.Working("loading...");
+  static init() {
+    StatusbarUi.working("loading...");
     StatusbarUi.startServer(500);
   }
 
-  static Working(workingMsg = "Working on it...") {
+  static working(workingMsg = "Working on it...") {
     StatusbarUi.statusBarItem.text = `$(pulse) ${workingMsg}`;
     StatusbarUi.statusBarItem.tooltip = "In case if it takes long time, try to close all browser window.";
     StatusbarUi.statusBarItem.command = undefined;
