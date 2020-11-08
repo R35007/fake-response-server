@@ -27,12 +27,18 @@ export class Prompt {
     });
   };
 
+  static getSortKey = async (keyList: string[]) => {
+    return vscode.window.showQuickPick(keyList, {
+      placeHolder: "Please select any key to sort",
+    });
+  };
+
   static showPopupMessage = (message: string, action: "info" | "warning" | "error") => {
     if (action === "info") {
-      const dontshowTxt = "Don't show again";
+      const dontShowTxt = "Don't show again";
       !Settings.donotShowInfoMsg &&
-        vscode.window.showInformationMessage(message, dontshowTxt).then((choice) => {
-          choice && choice === dontshowTxt && (Settings.donotShowInfoMsg = true);
+        vscode.window.showInformationMessage(message, dontShowTxt).then((choice) => {
+          choice && choice === dontShowTxt && (Settings.donotShowInfoMsg = true);
         });
     } else if (action === "error") {
       vscode.window.showErrorMessage(message);

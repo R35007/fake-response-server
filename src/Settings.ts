@@ -48,6 +48,21 @@ export class Settings {
   static get showOnStatusbar() {
     return Settings.getSettings("showOnStatusbar") as boolean;
   }
+  static get isArrayAscending() {
+    return Settings.getSettings("sortArray.ascending") as boolean;
+  }
+  static get isObjectAscending() {
+    return Settings.getSettings("sortObject.ascending") as boolean;
+  }
+  static get preserveOrder() {
+    return Settings.getSettings("sortObject.preserveOrder") as boolean;
+  }
+  static get isCaseInsensitive() {
+    return Settings.getSettings("sort.caseInsensitive") as boolean;
+  }
+  static get sortObjectKeyList() {
+    return Settings.getSettings("sortObject.KeyList") as string[];
+  }
   static get donotShowInfoMsg() {
     return Settings.getSettings("donotShowInfoMsg") as boolean;
   }

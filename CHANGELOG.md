@@ -1,3 +1,8 @@
+## v0.0.6
+
+  - added sortJson command - helps to sort any json array or object.
+  - switching on environment will start the server when it is not started.
+
 ## v0.0.5
 
 - updated MIT `LICENSE`

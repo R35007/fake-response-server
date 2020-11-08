@@ -139,13 +139,32 @@ Total Resources = ${totalUniqueRoutes.length} resources.
         const env = await Prompt.getEnvironment(environmentList);
         if (env) {
           this.environment = env.toLowerCase();
-          this.isServerStarted && this.restartServer();
+          this.restartServer();
         }
       } else {
         Prompt.showPopupMessage("No Environment Found", "error");
       }
     } else {
       Prompt.showPopupMessage(`'fake-response-server.settings.paths.envPath' - Please provide a valid path here`, "error");
+    }
+  };
+
+  sortJson = async () => {
+    const editorProps = this.getEditorProps();
+    if (editorProps) {
+      const { editor, document, selection, selectedText } = editorProps;
+      try {
+        const data = JSON.parse(selectedText);
+        let sortedJson: any[] | object;
+        if (data && Array.isArray(data) && data.length) {
+          sortedJson = await this.getSortedArray(data);
+        } else if (data && typeof data === "object" && !Array.isArray(data) && Object.keys(data).length) {
+          sortedJson = await this.getSortedObject(data);
+        }
+        editor.edit((editBuilder) => {
+          editBuilder.replace(selection, JSON.stringify(sortedJson, null, "\t"));
+        });
+      } catch {}
     }
   };
 }

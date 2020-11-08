@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { filterBySchemaID, generateMockID, getRoutesListID, startServerID, stopServerID, switchEnvironmentID } from "./enum";
+import { filterBySchemaID, generateMockID, getRoutesListID, sortJsonID, startServerID, stopServerID, switchEnvironmentID } from "./enum";
 import { FakeResponseServer } from "./fakeResponseServer";
 import { StatusbarUi } from "./StatusBarUI";
 
@@ -23,6 +23,9 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 
   // Switch Environment
   subscriptions.push(vscode.commands.registerCommand(switchEnvironmentID, fakeResponseServer.switchEnvironment));
+
+  // Switch Environment
+  subscriptions.push(vscode.commands.registerCommand(sortJsonID, fakeResponseServer.sortJson));
 
   // show status bar
   subscriptions.push(StatusbarUi.statusBarItem);

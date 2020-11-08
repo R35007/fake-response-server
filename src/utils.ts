@@ -19,11 +19,13 @@ export class Utils {
     const editor = vscode.window.activeTextEditor;
     if (editor) {
       const document = editor.document;
+      const selection = editor.selection;
       const firstLine = document.lineAt(0);
       const lastLine = document.lineAt(document.lineCount - 1);
       const textRange = new vscode.Range(firstLine.range.start, lastLine.range.end);
       const editorText = document.getText(textRange);
-      return { editor, document, textRange, editorText };
+      const selectedText = document.getText(selection);
+      return { editor, document, selection, textRange, editorText, selectedText };
     }
 
     return false;
@@ -103,5 +105,80 @@ export class Utils {
     const filesList = this.fakeResponse.getFilesList(Settings.envPath);
     const envList = filesList.filter((f) => f.extension === ".json").map((f) => ({ ...f, fileName: f.fileName.toLowerCase() }));
     return envList;
+  };
+
+  protected getSortedObject = (obj: { [key: string]: any }) => {
+    const sortKeyList = [...new Set(Settings.sortObjectKeyList)];
+    const isAscending = Settings.isObjectAscending;
+    const objectKeys = Settings.preserveOrder ? Object.keys(obj) : this.getSortedArrayString(Object.keys(obj), isAscending);
+    const sortedKeys = isAscending
+      ? [...sortKeyList, ...objectKeys.filter((k) => sortKeyList.indexOf(k) < 0)]
+      : [...objectKeys.filter((k) => sortKeyList.indexOf(k) < 0), ...sortKeyList.reverse()];
+
+    return sortedKeys.reduce((res: object, key: string) => {
+      if (obj[key] !== null && obj[key] !== undefined) {
+        return { ...res, [key]: obj[key] };
+      }
+      return res;
+    }, {});
+  };
+
+  protected getSortedArray = async <T>(array: T[]): Promise<T[]> => {
+    const isAscending = Settings.isArrayAscending;
+    const isCaseInsensitive = Settings.isCaseInsensitive;
+    if (array.every((a) => a && typeof a === "object")) {
+      const keyList = this.getKeyList(array);
+      const sortKey = await Prompt.getSortKey(keyList);
+      if (sortKey?.length) {
+        const sortedArray = isCaseInsensitive
+          ? array.sort((a: any, b: any) => {
+              if (a[sortKey].toLowerCase() < b[sortKey].toLowerCase()) return -1;
+              if (a[sortKey].toLowerCase() > b[sortKey].toLowerCase()) return 1;
+              return 0;
+            })
+          : array.sort((a: any, b: any) => {
+              if (a[sortKey] < b[sortKey]) return -1;
+              if (a[sortKey] > b[sortKey]) return 1;
+              return 0;
+            });
+        return isAscending ? sortedArray.map(this.getSortedObject) : sortedArray.map(this.getSortedObject).reverse();
+      } else {
+        return array;
+      }
+    } else {
+      return this.getSortedArrayString(array, isAscending);
+    }
+  };
+
+  protected getSortedArrayString = (array: any[], isAscending: boolean) => {
+    const isCaseInsensitive = Settings.isCaseInsensitive;
+    if (array.every((a) => typeof a === "number")) {
+      return isAscending ? array.sort((a: any, b: any) => a - b) : array.sort((a: any, b: any) => b - a);
+    } else {
+      const sortedArray = isCaseInsensitive
+        ? array.sort((a: any, b: any) => {
+            if (a.toLowerCase() < b.toLowerCase()) return -1;
+            if (a.toLowerCase() > b.toLowerCase()) return 1;
+            return 0;
+          })
+        : array.sort();
+      return isAscending ? sortedArray : sortedArray.reverse();
+    }
+  };
+
+  protected getKeyList = (array: any[]) => {
+    const allKeys = array.reduce((keyList: string[], obj: object) => {
+      const filteredKeys = Object.entries(obj)
+        .filter(([key, val]) => {
+          if (typeof val !== "object") {
+            return true;
+          }
+          return false;
+        })
+        .map(([key, _val]) => key);
+
+      return keyList.concat(filteredKeys);
+    }, []);
+    return [...new Set(allKeys)] as string[];
   };
 }

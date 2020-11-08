@@ -100,8 +100,8 @@ Now provide the js path in the settings.
 
 ### `fake-response-server.settings.paths.generateMockCallbackPath`
 
-Provide the .js file path to `fake-response-server.settings.paths.generateMockCallbackPath` in the `settings.json` that default exports the callack method in the module.
-This callback method is triggred for each entry in the HAR data. This helps to manipulate the data while generating the mock.
+Provide the .js file path to `fake-response-server.settings.paths.generateMockCallbackPath` in the `settings.json` that default exports the callback method in the module.
+This callback method is triggered for each entry in the HAR data. This helps to manipulate the data while generating the mock.
 
 - For Example: create a `callback.js`
 

@@ -2,7 +2,7 @@
 	"name": "fake-response-server",
 	"displayName": "Fake Response Server",
 	"description": "Simple extension helps to generate local mock server",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"icon": "images/fr.png",
 	"publisher": "Thinker",
 	"license": "MIT",
@@ -73,6 +73,11 @@
 			{
 				"command": "fakeResponse.getRoutesList",
 				"title": "Get Routes List",
+				"category": "FakeResponse"
+			},
+			{
+				"command": "fakeResponse.sortJson",
+				"title": "Sort Json",
 				"category": "FakeResponse"
 			}
 		],
@@ -227,6 +232,34 @@
 					"type": "boolean",
 					"default": false,
 					"description": "Change this to true if you don't want to show information pop up messages."
+				},
+				"fake-response-server.settings.sortArray.ascending": {
+					"type": "boolean",
+					"default": true,
+					"description": "Change this to false if you want to sort array in descending order"
+				},
+				"fake-response-server.settings.sortObject.ascending": {
+					"type": "boolean",
+					"default": true,
+					"description": "Change this to false if you want to sort object in descending order"
+				},
+				"fake-response-server.settings.sortObject.preserveOrder": {
+					"type": "boolean",
+					"default": false,
+					"description": "Change this to true if you dont want to sort object in ascending or descending order"
+				},
+				"fake-response-server.settings.sort.caseInsensitive": {
+					"type": "boolean",
+					"default": true,
+					"description": "Change this to false if you want to sort Json in case sensitive order."
+				},
+				"fake-response-server.settings.sortObject.KeyList": {
+					"type": "array",
+					"default": [],
+					"items": {
+						"type": "string"
+					},
+					"description": "Object keys will be sorted in the given order"
 				}
 			}
 		}
