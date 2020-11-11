@@ -1,3 +1,7 @@
+## v0.0.7
+
+  - code optimized to backward compatible. Now available from vs code v1.30.0
+
 ## v0.0.6
 
   - added sortJson command - helps to sort any json array or object.
