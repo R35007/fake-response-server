@@ -2,7 +2,7 @@
 	"name": "fake-response-server",
 	"displayName": "Fake Response Server",
 	"description": "Simple extension helps to generate local mock server",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"icon": "images/fr.png",
 	"publisher": "Thinker",
 	"license": "MIT",
@@ -260,6 +260,11 @@
 						"type": "string"
 					},
 					"description": "Object keys will be sorted in the given order"
+				},
+				"fake-response-server.settings.reverseRouteOrder": {
+					"type": "boolean",
+					"default": false,
+					"description": "If true, routes will be generated in a reverse order"
 				}
 			}
 		}
@@ -282,6 +287,6 @@
 	},
 	"dependencies": {
 		"@types/express": "^4.17.8",
-		"fake-response": "^6.2.2"
+		"fake-response": "^6.3.2"
 	}
 }

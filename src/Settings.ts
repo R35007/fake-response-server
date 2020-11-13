@@ -48,6 +48,9 @@ export class Settings {
   static get showOnStatusbar() {
     return Settings.getSettings("showOnStatusbar") as boolean;
   }
+  static get reverseRouteOrder() {
+    return Settings.getSettings("reverseRouteOrder") as boolean;
+  }
   static get isArrayAscending() {
     return Settings.getSettings("sortArray.ascending") as boolean;
   }
@@ -147,6 +150,7 @@ export class Settings {
       baseUrl: Settings.baseUrl,
       delay: Settings.delay,
       excludeRoutes: Settings.excludeRoutes,
+      reverseRouteOrder : Settings.reverseRouteOrder,
       throwError: true,
     };
   }

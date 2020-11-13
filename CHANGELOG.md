@@ -1,3 +1,7 @@
+## v0.0.8
+
+  - added `fake-response-server.settings.reverseRouteOrder` in settings. If true routes will be generated in a reverse order.
+
 ## v0.0.7
 
   - code optimized to backward compatible. Now available from vs code v1.30.0
