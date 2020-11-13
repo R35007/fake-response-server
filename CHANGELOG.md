@@ -19,7 +19,7 @@
 ## v0.0.4
 
 - settings are renamed from `fakeResponse.xxx` to `fake-response-server.settings.xxx`
-- uses node package `fake-response@6.2.2`
+- uses node package `fake-response@6.3.2`
 - provide callback method to generate mock.
 - implemented environment switch.
 - proxy and groupings are added to exclude routes by default.
