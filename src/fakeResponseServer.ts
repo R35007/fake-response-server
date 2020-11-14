@@ -59,10 +59,10 @@ export class FakeResponseServer extends Utils {
       const { fileName, editor, document, textRange } = writable;
       try {
         const { availableRoutes, config } = this.fakeResponse.getData();
-        
+
         const defaultRoutes = ["/routesList", "/db"];
         const totalUniqueRoutes = [...new Set([...availableRoutes, ...defaultRoutes])]; // getting unique list
-        
+
         const initial = `
         Total Resources = ${totalUniqueRoutes.length} resources.
         @hostname = localhost
@@ -71,12 +71,12 @@ export class FakeResponseServer extends Utils {
         
         ###
         `;
-        
+
         const routesList = totalUniqueRoutes.reduce((res, route) => {
           const url = `http://localhost:${config.port}${route}`;
           return res + url + "\n###\n";
         }, initial);
-        
+
         this.writeFile(routesList, fileName, "Routes List Fetched Successfully", editor, document, textRange);
         this.output.appendLine("Routes List Fetched Successfully");
       } catch (err) {
@@ -86,7 +86,7 @@ export class FakeResponseServer extends Utils {
       }
     }
   };
-  
+
   startServer = async (txt: string) => {
     this.output.appendLine(`Server ${txt} initiated`);
     try {
@@ -94,18 +94,20 @@ export class FakeResponseServer extends Utils {
         this.output.appendLine(`Server ${txt}ing...`);
         StatusbarUi.working(`${txt}ing...`);
         const mock = this.getMockFromPath(Settings.mockPath);
-        
+
         this.fakeResponse.setData(mock, Settings.config, Settings.injectors, Settings.globals);
         await this.fakeResponse.launchServer();
-        
+
         this.isServerStarted = true;
         const statusMsg = `Server is ${txt}ed at port : ${Settings.port}`;
         StatusbarUi.stopServer(150, Settings.port, () => Prompt.showPopupMessage(statusMsg, "info"));
         this.output.appendLine(`Server is ${txt}ed at port : ${Settings.port}`);
       } else {
         this.isServerStarted = false;
-        this.output.appendLine(`'fake-response-server.settings.paths.mockPath' - Please provide a valid path here`);
-        Prompt.showPopupMessage(`'fake-response-server.settings.paths.mockPath' - Please provide a valid path here`, "error");
+        const statusMsg = `'fake-response-server.settings.paths.mockPath' - Please provide a valid path here`;
+        this.output.appendLine(statusMsg);
+        Prompt.showPopupMessage(statusMsg, "error");
+        StatusbarUi.startServer(0, () => Prompt.showPopupMessage(statusMsg, "error"));
       }
     } catch (err) {
       this.isServerStarted = false;
@@ -115,14 +117,14 @@ export class FakeResponseServer extends Utils {
       StatusbarUi.startServer(0, () => Prompt.showPopupMessage(statusMsg, "error"));
     }
   };
-  
+
   stopServer = async () => {
     this.output.appendLine(`Server Stop initiated`);
     try {
       this.output.appendLine(`Server Stopping`);
       if (this.isServerStarted) {
         StatusbarUi.working("Stopping...");
-        
+
         await this.fakeResponse.stopServer();
         this.isServerStarted = false;
         StatusbarUi.startServer(150, () => Prompt.showPopupMessage("Server is Stopped", "info"));
@@ -130,7 +132,8 @@ export class FakeResponseServer extends Utils {
       } else {
         this.isServerStarted = true;
         this.output.appendLine(`No Server to Stop`);
-        Prompt.showPopupMessage("No Server to Stop.", "error");
+        Prompt.showPopupMessage("No Server to Stop", "error");
+        StatusbarUi.stopServer(0, Settings.port, () => Prompt.showPopupMessage("No Server to Stop", "error"));
       }
     } catch (err) {
       this.isServerStarted = true;
@@ -150,7 +153,7 @@ export class FakeResponseServer extends Utils {
         this.startServer("Re Start");
       } catch (err) {
         this.isServerStarted = true;
-        StatusbarUi.stopServer(150, Settings.port);
+        StatusbarUi.stopServer(0, Settings.port);
         this.output.appendLine(err);
       }
     } else {
@@ -167,7 +170,7 @@ export class FakeResponseServer extends Utils {
         const envList = this.getEnvironmentList();
         if (envList && envList.length) {
           const environmentList = [...new Set(["none", ...envList.map((e) => e.fileName)])];
-          
+
           // making the selected environment to appear in first of the list
           const selectedEnvIndex = environmentList.findIndex((e) => e === Settings.environment.toLowerCase());
           if (selectedEnvIndex >= 0) {
@@ -176,7 +179,7 @@ export class FakeResponseServer extends Utils {
           } else {
             Settings.environment = "none";
           }
-          
+
           const env = await Prompt.getEnvironment(environmentList);
           if (env) {
             this.environment = env.toLowerCase();
@@ -197,7 +200,7 @@ export class FakeResponseServer extends Utils {
       Prompt.showPopupMessage(`Something went wrong`, "error");
     }
   };
-  
+
   sortJson = async () => {
     this.output.appendLine(`Sort JSON initiated`);
     const editorProps = this.getEditorProps();
