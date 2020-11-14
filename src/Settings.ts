@@ -1,4 +1,4 @@
-import { Config, Injectors, KeyValString } from "fake-Response/dist/model";
+import { Config, Injectors, KeyValString } from "fake-response/dist/model";
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
@@ -150,7 +150,7 @@ export class Settings {
       baseUrl: Settings.baseUrl,
       delay: Settings.delay,
       excludeRoutes: Settings.excludeRoutes,
-      reverseRouteOrder : Settings.reverseRouteOrder,
+      reverseRouteOrder: Settings.reverseRouteOrder,
       throwError: true,
     };
   }

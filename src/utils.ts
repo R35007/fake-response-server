@@ -9,10 +9,12 @@ import { Settings } from "./Settings";
 export class Utils {
   protected fakeResponse: FakeResponse;
   protected environment = "none";
+  protected output;
 
   constructor() {
     const workSpaceFolderPath = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : "./";
     this.fakeResponse = new FakeResponse(undefined, { rootPath: workSpaceFolderPath, throwError: true });
+    this.output = vscode.window.createOutputChannel("Fake Response");
   }
 
   protected getEditorProps = () => {
@@ -31,7 +33,7 @@ export class Utils {
     return false;
   };
 
-  protected getWritables = async (extensions: string[], action: string) => {
+  protected getWritable = async (extensions: string[], action: string) => {
     const editorProps = this.getEditorProps();
 
     if (editorProps) {
@@ -91,7 +93,7 @@ export class Utils {
     const environment = this.environment.toLowerCase();
     if (!environment.trim().length || environment === "none" || !environmentList.find((e) => e.fileName === environment)) {
       Settings.environment = "none";
-      return mockPath;
+      return this.fakeResponse.getMockFromPath(mockPath, []);
     }
 
     Settings.environment = environment;
@@ -130,17 +132,22 @@ export class Utils {
       const keyList = this.getKeyList(array);
       const sortKey = await Prompt.getSortKey(keyList);
       if (sortKey?.length) {
-        const sortedArray = isCaseInsensitive
-          ? array.sort((a: any, b: any) => {
-              if (a[sortKey].toLowerCase() < b[sortKey].toLowerCase()) return -1;
-              if (a[sortKey].toLowerCase() > b[sortKey].toLowerCase()) return 1;
-              return 0;
-            })
-          : array.sort((a: any, b: any) => {
-              if (a[sortKey] < b[sortKey]) return -1;
-              if (a[sortKey] > b[sortKey]) return 1;
-              return 0;
-            });
+        let sortedArray: any[] = [];
+        if (array.every((a: any) => typeof a[sortKey] === "number")) {
+          sortedArray = array.sort((a: any, b: any) => a[sortKey] - b[sortKey]);
+        } else {
+          sortedArray = isCaseInsensitive
+            ? array.sort((a: any, b: any) => {
+                if (a[sortKey].toLowerCase() < b[sortKey].toLowerCase()) return -1;
+                if (a[sortKey].toLowerCase() > b[sortKey].toLowerCase()) return 1;
+                return 0;
+              })
+            : array.sort((a: any, b: any) => {
+                if (a[sortKey] < b[sortKey]) return -1;
+                if (a[sortKey] > b[sortKey]) return 1;
+                return 0;
+              });
+        }
         return isAscending ? sortedArray.map(this.getSortedObject) : sortedArray.map(this.getSortedObject).reverse();
       } else {
         return array;

@@ -13,6 +13,10 @@ export class StatusbarUi {
     return StatusbarUi._statusBarItem;
   }
 
+  static set statusBarItem(val: any) {
+    StatusbarUi._statusBarItem = val;
+  }
+
   static init() {
     StatusbarUi.working("loading...");
     StatusbarUi.startServer(500);
@@ -38,7 +42,6 @@ export class StatusbarUi {
       StatusbarUi.statusBarItem.text = `$(circle-slash) Port : ${port}`;
       StatusbarUi.statusBarItem.command = stopServerID;
       StatusbarUi.statusBarItem.tooltip = "Click to stop mock server";
-      const dontshowTxt = "Don't show again";
       showPopupMessage && showPopupMessage();
     }, delay);
   }

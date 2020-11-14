@@ -1,33 +1,61 @@
 import * as vscode from "vscode";
-import { filterBySchemaID, generateMockID, getRoutesListID, sortJsonID, startServerID, stopServerID, switchEnvironmentID } from "./enum";
+import {
+  filterBySchemaID,
+  generateMockID,
+  getRoutesListID,
+  reloadID,
+  sortJsonID,
+  startServerID,
+  stopServerID,
+  switchEnvironmentID,
+} from "./enum";
 import { FakeResponseServer } from "./fakeResponseServer";
 import { StatusbarUi } from "./StatusBarUI";
 
-export function activate({ subscriptions }: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext) {
   const fakeResponseServer = new FakeResponseServer();
 
   // Generate Mock
-  subscriptions.push(vscode.commands.registerCommand(generateMockID, fakeResponseServer.generateMockFromHAR));
+  context.subscriptions.push(vscode.commands.registerCommand(generateMockID, fakeResponseServer.generateMockFromHAR));
 
   // Filter By Schema
-  subscriptions.push(vscode.commands.registerCommand(filterBySchemaID, fakeResponseServer.filterBySchema));
+  context.subscriptions.push(vscode.commands.registerCommand(filterBySchemaID, fakeResponseServer.filterBySchema));
 
   // Get Routes List
-  subscriptions.push(vscode.commands.registerCommand(getRoutesListID, fakeResponseServer.getRoutesList));
+  context.subscriptions.push(vscode.commands.registerCommand(getRoutesListID, fakeResponseServer.getRoutesList));
 
   // Start Server
-  subscriptions.push(vscode.commands.registerCommand(startServerID, fakeResponseServer.restartServer));
+  context.subscriptions.push(vscode.commands.registerCommand(startServerID, fakeResponseServer.restartServer));
 
   // Stop Server
-  subscriptions.push(vscode.commands.registerCommand(stopServerID, fakeResponseServer.stopServer));
+  context.subscriptions.push(vscode.commands.registerCommand(stopServerID, fakeResponseServer.stopServer));
 
   // Switch Environment
-  subscriptions.push(vscode.commands.registerCommand(switchEnvironmentID, fakeResponseServer.switchEnvironment));
+  context.subscriptions.push(vscode.commands.registerCommand(switchEnvironmentID, fakeResponseServer.switchEnvironment));
 
   // Switch Environment
-  subscriptions.push(vscode.commands.registerCommand(sortJsonID, fakeResponseServer.sortJson));
+  context.subscriptions.push(vscode.commands.registerCommand(sortJsonID, fakeResponseServer.sortJson));
 
   // show status bar
-  subscriptions.push(StatusbarUi.statusBarItem);
+  context.subscriptions.push(StatusbarUi.statusBarItem);
+
+  // Reload Extension
+  context.subscriptions.push(
+    vscode.commands.registerCommand(reloadID, () => {
+      deactivate();
+      try {
+        fakeResponseServer.stopServer();
+      } catch {}
+      context.subscriptions.forEach((sub) => {
+        try {
+          sub.dispose();
+        } catch {}
+      });
+      setTimeout(() => {
+        StatusbarUi.statusBarItem = undefined;
+        activate(context);
+      }, 1000);
+    })
+  );
 }
 export function deactivate() {}

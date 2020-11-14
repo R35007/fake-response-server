@@ -1,3 +1,9 @@
+## v0.0.9
+
+  - added `Fake Response: Reload` command. helps to reload the extension without reloading the vscode.
+  - added `Fake Response` output. - helps to debug the log in the output.
+  - bug fix
+
 ## v0.0.8
 
   - added `fake-response-server.settings.reverseRouteOrder` in settings. If true routes will be generated in a reverse order.
@@ -19,7 +25,7 @@
 ## v0.0.4
 
 - settings are renamed from `fakeResponse.xxx` to `fake-response-server.settings.xxx`
-- uses node package `fake-response@6.3.2`
+- uses node package `fake-response@6.3.5`
 - provide callback method to generate mock.
 - implemented environment switch.
 - proxy and groupings are added to exclude routes by default.
