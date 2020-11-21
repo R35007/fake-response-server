@@ -2,7 +2,7 @@
 	"name": "fake-response-server",
 	"displayName": "Fake Response Server",
 	"description": "Simple extension helps to generate local mock server",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"icon": "images/fr.png",
 	"publisher": "Thinker",
 	"license": "MIT",
@@ -140,18 +140,8 @@
 							"description": "Provide the callback.js path. Note: the js file must have an default module export of callback method. This method will be called for each entry in HAR object."
 						}
 					},
+					"description": "set paths to start the mock server",
 					"additionalProperties": false
-				},
-				"fake-response-server.settings.resourceTypeFilters": {
-					"type": "array",
-					"description": "Provide list of resourceTypes to generate a mock",
-					"default": [
-						"xhr"
-					],
-					"items": {
-						"type": "string"
-					},
-					"uniqueItems": true
 				},
 				"fake-response-server.settings.filterSchema": {
 					"type": "object",
@@ -228,16 +218,6 @@
 					"default": false,
 					"description": "If true, it overrides all specific delays provided in the injectors."
 				},
-				"fake-response-server.settings.showOnStatusbar": {
-					"type": "boolean",
-					"default": true,
-					"description": "Change this to false if you don't want the button to show in statusbar"
-				},
-				"fake-response-server.settings.donotShowInfoMsg": {
-					"type": "boolean",
-					"default": false,
-					"description": "Change this to true if you don't want to show information pop up messages."
-				},
 				"fake-response-server.settings.sortArray.ascending": {
 					"type": "boolean",
 					"default": true,
@@ -270,6 +250,27 @@
 					"type": "boolean",
 					"default": false,
 					"description": "If true, routes will be generated in a reverse order"
+				},
+				"fake-response-server.settings.statusBar.show": {
+					"type": "boolean",
+					"default": true,
+					"description": "Change this to false if you don't want the button to show in statusbar"
+				},
+				"fake-response-server.settings.statusBar.position": {
+					"type": "string",
+					"default": "Right",
+					"enum": ["Right","Left"],
+					"description": "Set a custom position of the statusbar. Note: Please reload the extension to take effect."
+				},
+				"fake-response-server.settings.statusBar.priority": {
+					"type": "number",
+					"default": 0,
+					"description": "helps to reorder the placement of the statusbar. Minimum priority moves the statusbar to left most. Note: Please reload the extension to take effect."
+				},
+				"fake-response-server.settings.donotShowInfoMsg": {
+					"type": "boolean",
+					"default": false,
+					"description": "Change this to true if you don't want to show information pop up messages."
 				}
 			}
 		}
@@ -292,6 +293,6 @@
 	},
 	"dependencies": {
 		"@types/express": "^4.17.8",
-		"fake-response": "^6.3.5"
+		"fake-response": "^6.3.6"
 	}
 }

@@ -7,11 +7,11 @@ export class StatusbarUi {
 
   static get statusBarItem() {
     if (!StatusbarUi._statusBarItem) {
-      StatusbarUi._statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-      if (Settings.showOnStatusbar) this.statusBarItem.show();
+      StatusbarUi._statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment[Settings.statusBarPosition], Settings.statusBarPriority);
+      if (Settings.showStatusbar) this.statusBarItem.show();
     }
     return StatusbarUi._statusBarItem;
-  }
+  } 
 
   static set statusBarItem(val: any) {
     StatusbarUi._statusBarItem = val;

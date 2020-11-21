@@ -1,4 +1,5 @@
 import { FakeResponse } from "fake-response";
+import { FileDetails, HAR } from "fake-response/dist/model";
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
@@ -104,9 +105,34 @@ export class Utils {
   };
 
   protected getEnvironmentList = () => {
-    const filesList = this.fakeResponse.getFilesList(Settings.envPath);
+    const filesList = this.convertHARtoMock();
     const envList = filesList.filter((f) => f.extension === ".json").map((f) => ({ ...f, fileName: f.fileName.toLowerCase() }));
     return envList;
+  };
+
+  protected convertHARtoMock = () => {
+    const filesList = this.fakeResponse.getFilesList(Settings.envPath);
+    const jsonList = filesList.map((f) => {
+      if (f.extension === ".har") {
+        try {
+          const oldPath = f.filePath;
+          const newPath = f.filePath.replace(".har", ".json");
+          const data = fs.readFileSync(oldPath);
+          const harData = JSON.parse(data.toString()) as HAR;
+          const newMock = this.fakeResponse.transformHar(harData, Settings.callback);
+          fs.writeFileSync(oldPath, JSON.stringify(newMock, null, "\t"));
+          fs.renameSync(oldPath, newPath);
+          return { ...f, extension: ".json", filePath: newPath };
+        } catch(err){
+          console.log(err);
+          return f;
+        }
+      }
+
+      return f;
+    });
+
+    return jsonList;
   };
 
   protected getSortedObject = (obj: { [key: string]: any }) => {

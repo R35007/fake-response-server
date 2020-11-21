@@ -1,3 +1,16 @@
+## v0.0.10
+
+  - removed 
+    - `fake-response-server.settings.resourceTypeFilters`
+    - `fake-response-server.settings.showOnStatusbar`
+  - added
+    - `fake-response-server.settings.statusBar.show` - show or hide statusbar
+    - `fake-response-server.settings.statusBar.position` - set "Right" or  "Left" position of the statusbar
+    - `fake-response-server.settings.statusBar.priority` - helps to set the placement of the statusbar. the minium priority moves the statusbar to left most
+  - output is optimized to debug.
+  - now .har files under the environment folder will automatically get converted to a mock json while starting the server
+  - `fake-response` is upgraded to v6.3.6
+
 ## v0.0.9
 
   - added `Fake Response: Reload` command. helps to reload the extension without reloading the vscode.

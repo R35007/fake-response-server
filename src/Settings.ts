@@ -27,9 +27,6 @@ export class Settings {
   static get baseUrl() {
     return Settings.getSettings("baseUrl") as string;
   }
-  static get resourceTypeFilters() {
-    return Settings.getSettings("resourceTypeFilters") as string[];
-  }
   static get filterSchema() {
     return Settings.getSettings("filterSchema") as object;
   }
@@ -45,8 +42,14 @@ export class Settings {
       override: Settings.getSettings("overrideCommonDelay") as boolean,
     };
   }
-  static get showOnStatusbar() {
-    return Settings.getSettings("showOnStatusbar") as boolean;
+  static get showStatusbar() {
+    return Settings.getSettings("statusBar.show") as boolean;
+  }
+  static get statusBarPosition() {
+    return Settings.getSettings("statusBar.position") as "Right" | "Left";
+  }
+  static get statusBarPriority() {
+    return parseInt((Settings.getSettings("statusBar.priority") as any).toString());
   }
   static get reverseRouteOrder() {
     return Settings.getSettings("reverseRouteOrder") as boolean;

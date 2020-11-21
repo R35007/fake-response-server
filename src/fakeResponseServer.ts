@@ -10,23 +10,23 @@ export class FakeResponseServer extends Utils {
 
   constructor() {
     super();
-    this.output.appendLine("\n\nFake Response Server Initiated\n\n");
+    this.output.appendLine("\nFake Response Server Initiated");
     StatusbarUi.init();
   }
 
   generateMockFromHAR = async () => {
-    this.output.appendLine("Mock Generation initiated");
+    this.output.appendLine(`\n[${new Date().toLocaleTimeString()}] [Running] Mock Generation initiated`);
     const writable = await this.getWritable([".json"], generateMockID);
     if (writable) {
-      this.output.appendLine("Mock Generation running...");
+      this.output.appendLine(`[${new Date().toLocaleTimeString()}] Mock Generation running...`);
       const { editorText, fileName, editor, document, textRange } = writable;
       try {
         const harObject = JSON.parse(editorText) as HAR;
-        const mock = this.fakeResponse.transformHar(harObject, Settings.resourceTypeFilters, Settings.callback);
+        const mock = this.fakeResponse.transformHar(harObject, Settings.callback);
         this.writeFile(JSON.stringify(mock, null, "\t"), fileName, "Mock generated Successfully", editor, document, textRange);
-        this.output.appendLine("Mock generated Successfully");
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Mock generated Successfully`);
       } catch (err) {
-        this.output.appendLine("Failed to generate mock");
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Failed to generate mock`);
         this.output.appendLine(err);
         Prompt.showPopupMessage(`Failed to generate mock. \n${err.message}`, "error");
       }
@@ -34,17 +34,17 @@ export class FakeResponseServer extends Utils {
   };
 
   filterBySchema = async () => {
-    this.output.appendLine("Filter JSON initiated");
+    this.output.appendLine(`\n[${new Date().toLocaleTimeString()}] [Running] Filter JSON initiated`);
     const writeable = await this.getWritable([".json"], filterBySchemaID);
     if (writeable) {
-      this.output.appendLine("Filter JSON running...");
+      this.output.appendLine(`[${new Date().toLocaleTimeString()}] Filter JSON running...`);
       const { editorText, fileName, editor, document, textRange } = writeable;
       try {
         const filteredObject = this.fakeResponse.filterBySchema(JSON.parse(editorText), Settings.filterSchema);
         this.writeFile(JSON.stringify(filteredObject, null, "\t"), fileName, "Filtered Successfully", editor, document, textRange);
-        this.output.appendLine("Filtered Successfully");
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Filtered Successfully`);
       } catch (err) {
-        this.output.appendLine("Failed to Filter");
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Failed to Filter`);
         this.output.appendLine(err);
         Prompt.showPopupMessage(`Failed to Filter. \n${err.message}`, "error");
       }
@@ -52,10 +52,10 @@ export class FakeResponseServer extends Utils {
   };
 
   getRoutesList = async () => {
-    this.output.appendLine("Get Routes List initiated");
+    this.output.appendLine(`\n[${new Date().toLocaleTimeString()}] [Running] Get Routes List initiated`);
     const writable = await this.getWritable([".http"], getRoutesListID);
     if (writable) {
-      this.output.appendLine("Get Routes List running...");
+      this.output.appendLine(`[${new Date().toLocaleTimeString()}] Get Routes List running...`);
       const { fileName, editor, document, textRange } = writable;
       try {
         const { availableRoutes, config } = this.fakeResponse.getData();
@@ -78,9 +78,9 @@ export class FakeResponseServer extends Utils {
         }, initial);
 
         this.writeFile(routesList, fileName, "Routes List Fetched Successfully", editor, document, textRange);
-        this.output.appendLine("Routes List Fetched Successfully");
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Routes List Fetched Successfully`);
       } catch (err) {
-        this.output.appendLine("Failed to Fetch Routes");
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Failed to Fetch Routes`);
         this.output.appendLine(err);
         Prompt.showPopupMessage(`Failed to Fetch Routes. \n${err.message}`, "error");
       }
@@ -88,10 +88,10 @@ export class FakeResponseServer extends Utils {
   };
 
   startServer = async (txt: string) => {
-    this.output.appendLine(`Server ${txt} initiated`);
+    this.output.appendLine(`\n[${new Date().toLocaleTimeString()}] [Running] Server ${txt} initiated`);
     try {
       if (Settings.mockPath.length) {
-        this.output.appendLine(`Server ${txt}ing...`);
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] Server ${txt}ing...`);
         StatusbarUi.working(`${txt}ing...`);
         const mock = this.getMockFromPath(Settings.mockPath);
 
@@ -101,17 +101,17 @@ export class FakeResponseServer extends Utils {
         this.isServerStarted = true;
         const statusMsg = `Server is ${txt}ed at port : ${Settings.port}`;
         StatusbarUi.stopServer(150, Settings.port, () => Prompt.showPopupMessage(statusMsg, "info"));
-        this.output.appendLine(`Server is ${txt}ed at port : ${Settings.port}`);
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Server is ${txt}ed at port : ${Settings.port}`);
       } else {
         this.isServerStarted = false;
         const statusMsg = `'fake-response-server.settings.paths.mockPath' - Please provide a valid path here`;
-        this.output.appendLine(statusMsg);
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] ${statusMsg}`);
         Prompt.showPopupMessage(statusMsg, "error");
         StatusbarUi.startServer(0, () => Prompt.showPopupMessage(statusMsg, "error"));
       }
     } catch (err) {
       this.isServerStarted = false;
-      this.output.appendLine(`Server Failed to ${txt}`);
+      this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Server Failed to ${txt}`);
       this.output.appendLine(err);
       const statusMsg = `Server Failed to ${txt}. \n ${err.message}`;
       StatusbarUi.startServer(0, () => Prompt.showPopupMessage(statusMsg, "error"));
@@ -119,27 +119,27 @@ export class FakeResponseServer extends Utils {
   };
 
   stopServer = async () => {
-    this.output.appendLine(`Server Stop initiated`);
+    this.output.appendLine(`\n[${new Date().toLocaleTimeString()}] [Running] Server Stop initiated`);
     try {
-      this.output.appendLine(`Server Stopping`);
+      this.output.appendLine(`[${new Date().toLocaleTimeString()}] Server Stopping`);
       if (this.isServerStarted) {
         StatusbarUi.working("Stopping...");
 
         await this.fakeResponse.stopServer();
         this.isServerStarted = false;
         StatusbarUi.startServer(150, () => Prompt.showPopupMessage("Server is Stopped", "info"));
-        this.output.appendLine(`Server is Stopped`);
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Server is Stopped`);
       } else {
         this.isServerStarted = true;
-        this.output.appendLine(`No Server to Stop`);
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] No Server to Stop`);
         Prompt.showPopupMessage("No Server to Stop", "error");
         StatusbarUi.stopServer(0, Settings.port, () => Prompt.showPopupMessage("No Server to Stop", "error"));
       }
     } catch (err) {
       this.isServerStarted = true;
-      this.output.appendLine(`Failed to Stop`);
+      this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Server Failed to Stop`);
       this.output.appendLine(err);
-      const statsMsg = `Failed to Stop. \n${err.message}`;
+      const statsMsg = `Server Failed to Stop. \n${err.message}`;
       StatusbarUi.stopServer(0, Settings.port, () => Prompt.showPopupMessage(statsMsg, "error"));
     }
   };
@@ -147,11 +147,14 @@ export class FakeResponseServer extends Utils {
   restartServer = async () => {
     if (this.isServerStarted) {
       try {
+        this.output.appendLine(`\n[${new Date().toLocaleTimeString()}] [Running] Server Stop initiated`);
         await this.fakeResponse.stopServer();
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Server Stopped`);
         this.isServerStarted = false;
         StatusbarUi.startServer(150);
         this.startServer("Re Start");
       } catch (err) {
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Server Failed to Stop`);
         this.isServerStarted = true;
         StatusbarUi.stopServer(0, Settings.port);
         this.output.appendLine(err);
@@ -163,9 +166,9 @@ export class FakeResponseServer extends Utils {
   };
 
   switchEnvironment = async () => {
-    this.output.appendLine(`Switch Environment initiated`);
+    this.output.appendLine(`\n[${new Date().toLocaleTimeString()}] [Running] Switch Environment initiated`);
     try {
-      this.output.appendLine(`Switching Environment...`);
+      this.output.appendLine(`[${new Date().toLocaleTimeString()}] Switching Environment...`);
       if (Settings.envPath.length) {
         const envList = this.getEnvironmentList();
         if (envList && envList.length) {
@@ -183,29 +186,29 @@ export class FakeResponseServer extends Utils {
           const env = await Prompt.getEnvironment(environmentList);
           if (env) {
             this.environment = env.toLowerCase();
-            this.output.appendLine(`Environment Switched Successfully.`);
+            this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Environment Switched to ${this.environment}`);
             this.restartServer();
           }
         } else {
-          this.output.appendLine(`No Environment Found`);
+          this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] No Environment Found`);
           Prompt.showPopupMessage("No Environment Found", "error");
         }
       } else {
-        this.output.appendLine(`'fake-response-server.settings.paths.envPath' - Please provide a valid path here`);
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] 'fake-response-server.settings.paths.envPath' - Please provide a valid path here`);
         Prompt.showPopupMessage(`'fake-response-server.settings.paths.envPath' - Please provide a valid path here`, "error");
       }
     } catch (err) {
-      this.output.appendLine(`Something went wrong`);
+      this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Something went wrong`);
       this.output.appendLine(err);
       Prompt.showPopupMessage(`Something went wrong`, "error");
     }
   };
 
   sortJson = async () => {
-    this.output.appendLine(`Sort JSON initiated`);
+    this.output.appendLine(`\n[${new Date().toLocaleTimeString()}] [Running] Sort JSON initiated`);
     const editorProps = this.getEditorProps();
     if (editorProps) {
-      this.output.appendLine(`Sorting JSON...`);
+      this.output.appendLine(`[${new Date().toLocaleTimeString()}] Sorting JSON...`);
       const { editor, document, selection, selectedText } = editorProps;
       try {
         const data = JSON.parse(selectedText);
@@ -217,11 +220,11 @@ export class FakeResponseServer extends Utils {
         }
         editor.edit((editBuilder) => {
           editBuilder.replace(selection, JSON.stringify(sortedJson, null, "\t"));
-          this.output.appendLine(`Sorted Successfully`);
+          this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Sorted Successfully`);
           Prompt.showPopupMessage("Sorted Successfully", "info");
         });
       } catch (err) {
-        this.output.appendLine(`Sorting Failed`);
+        this.output.appendLine(`[${new Date().toLocaleTimeString()}] [Done] Sorting Failed`);
         this.output.appendLine(err);
         Prompt.showPopupMessage("Sorting Failed", "error");
       }
