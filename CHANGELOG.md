@@ -1,3 +1,17 @@
+## v0.0.11
+
+  - added `_dealy` prop to data.
+  For Example :
+  ```json
+  {
+    "/route":{
+      "_delay" : 3000,
+      "result" : []
+    }
+  }
+  ```
+
+  This about route give a response by the given delay
 ## v0.0.10
 
   - removed 
